@@ -180,7 +180,12 @@ class tx_cachemgm_mod {
 
 
 		if (t3lib_div::_POST('_test_cache_hash'))	{
-			$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('ident,count(*)','cache_hash','1=1','ident');
+			$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+				'identifier,tags,count(*)',
+				'cache_hash',
+				'1=1',
+				'ident'
+			);
 			$output.= $this->debugRows($cache_hash_counts,'',1);
 		}
 
@@ -224,8 +229,12 @@ class tx_cachemgm_mod {
 					<td>Test:</td>
 				</tr>';
 
-		foreach($allTables as $table)	{
-			$count = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('count(*) as cnt',$table,'1=1');
+		foreach($allTables as $table => $tableInformation) {
+			if (isset($tableInformation['Rows'])) {
+				$count = $tableInformation['Rows'];
+			} else {
+				$count = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows('*', $table);
+			}
 
 			if (t3lib_div::_POST('_test_db_access_'.$table))	{
 				$output.='<input type="submit" name="_test_db_access_'.$table.'" value="Reload Test for '.$table.'" />';
@@ -245,7 +254,7 @@ class tx_cachemgm_mod {
 				foreach($keysToLookUp as $keyname=>$field)	{
 					$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($field.', RAND() as randNum',$table,'1=1',$field,'randNum',$TEST_db_access_number,$field);
 					$info[$table.'_'.$keyname]['Table'] = $table;
-					$info[$table.'_'.$keyname]['Count'] = $count[0]['cnt'];
+					$info[$table.'_'.$keyname]['Count'] = $count;
 					$info[$table.'_'.$keyname]['Key'] = $keyname;
 					$info[$table.'_'.$keyname]['Field'] = $field;
 					$info[$table.'_'.$keyname]['Records'] = count($rows) ? $rows : '';
@@ -254,7 +263,7 @@ class tx_cachemgm_mod {
 
 			$navTable.='<tr>
 				<td>'.$table.'</td>
-				<td>'.$count[0]['cnt'].'</td>
+				<td>'.$count.'</td>
 				<td><input type="submit" name="_test_db_access_'.$table.'" value="Test" /></td>
 			</tr>';
 		}

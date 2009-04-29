@@ -62,6 +62,17 @@ require_once(PATH_t3lib.'class.t3lib_tcemain.php');
 class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 
 	/**
+	 * Frontend cache object to table cache_pages.
+	 * @var t3lib_cache_frontend_Cache
+	 */
+	protected $pageCache;
+
+	public function __construct() {
+		$this->pageCache = $GLOBALS['typo3CacheManager']->getCache('cache_pages');
+	}
+
+
+	/**
 	 * Returns the menu array
 	 *
 	 * @return	array
@@ -229,11 +240,11 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(t3lib_BEfunc::datetime($inf['tstamp'])).' / '.htmlspecialchars(t3lib_BEfunc::calcAge($inf['tstamp']-time())).'</td>';
 					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(t3lib_BEfunc::datetime($inf['expires'])).' / '.htmlspecialchars(t3lib_BEfunc::calcAge($inf['expires']-time())).'</td>';
 
-					$tCells[]='<td>'.htmlspecialchars($inf['id']).'<a href="index.php?id='.$this->pObj->id.'&showID='.htmlspecialchars($inf['id']).'"> - <u>Details</u></a></td>';
+					$tCells[]='<td>'.htmlspecialchars($inf['id']).'<a href="index.php?id='.$this->pObj->id.'&showID='.htmlspecialchars($inf['hash']).'"> - <u>Details</u></a></td>';
 					$tCells[]='<td>'.htmlspecialchars($inf['hash']).'</td>';
 
 						// Compile Row:
-					$trClass = strlen($inf['HTML']) && strlen($inf['HTML'])<1000 ? 'bgColor6' : 'bgColor'.($cc%2 ? '-20':'-10');
+					$trClass = ($page_sizes && strlen($inf['HTML']) && strlen($inf['HTML'])<1000 ? 'bgColor6' : 'bgColor'.($cc%2 ? '-20':'-10'));
 					$output.= '
 						<tr class="'.$trClass.'">
 							'.implode('
@@ -285,11 +296,11 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	/**
 	 * Shows details about a single cache entry.
 	 *
-	 * @param	string		cache entry id.
+	 * @param	string		cache entry identifier.
 	 * @return	string		HTML
 	 */
-	function renderID($id)	{
-		$cache_row = $this->getCacheInformation_entry($id);
+	function renderID($identifier) {
+		$cache_row = $this->getCacheInformation_entry($identifier);
 
 		$html = $cache_row['HTML'];
 		unset($cache_row['HTML']);
@@ -326,22 +337,9 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	 * @return	array		Page Cache records
 	 */
 	function getCacheInformation($pageId,$page_sizes)	{
+		$cachedPages = $this->pageCache->getByTag('pageId_' . intval($pageId));
 
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-					'id,hash,page_id,reg1,tstamp,expires,cache_data,temp_content'.($page_sizes?',HTML':''),
-					'cache_pages',
-					'page_id='.intval($pageId),
-					'',
-					'reg1'
-				);
-
-			// Traverse result:
-		$output = array();
-		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
-			$output[] = $row;
-		}
-
-		return $output;
+		return $cachedPages;
 	}
 
 	/**
@@ -381,19 +379,18 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	/**
 	 * Fetch caching information for page.
 	 *
-	 * @param	integer		Page ID
-	 * @return	array		Page Cache records
+	 * @param	integer		Page Cache identifier
+	 * @return	array		Page Cache record
 	 */
-	function getCacheInformation_entry($entryId)	{
+	function getCacheInformation_entry($identifier) {
+		$cacheInformation = array();
+		$cachedPage = $this->pageCache->get($identifier);
 
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
-					'*',
-					'cache_pages',
-					'id='.intval($entryId)
-				);
+		if ($cachedPage !== false) {
+			$cacheInformation = $cachedPage;
+		}
 
-			// Traverse result:
-		return $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		return $cacheInformation;
 	}
 }
 
