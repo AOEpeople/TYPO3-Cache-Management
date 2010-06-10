@@ -60,15 +60,22 @@ require_once(PATH_t3lib.'class.t3lib_tcemain.php');
  * @subpackage tx_cachemgm
  */
 class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
+	/**
+	 * @var boolean
+	 */
+	protected $useCachingFramework;
 
 	/**
 	 * Frontend cache object to table cache_pages.
-	 * @var t3lib_cache_frontend_Cache
+	 * @var t3lib_cache_frontend_AbstractFrontend
 	 */
 	protected $pageCache;
 
+	/**
+	 * Creates this object.
+	 */
 	public function __construct() {
-		$this->pageCache = $GLOBALS['typo3CacheManager']->getCache('cache_pages');
+		$this->useCachingFramework = (defined('TYPO3_UseCachingFramework') && TYPO3_UseCachingFramework);
 	}
 
 
@@ -336,8 +343,27 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	 * @param	boolean		Selects content column as well if set.
 	 * @return	array		Page Cache records
 	 */
-	function getCacheInformation($pageId,$page_sizes)	{
-		$cachedPages = $this->pageCache->getByTag('pageId_' . intval($pageId));
+	function getCacheInformation($pageId, $page_sizes) {
+		$cachedPages = array();
+		$pageId = intval($pageId);
+
+		if (!$this->useCachingFramework) {
+			$fieldList = 'id,hash,page_id,reg1,tstamp,expires,cache_data,temp_content';
+
+			if ($page_sizes) {
+				$fieldList .= ',HTML';
+			}
+
+			$cachedPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+				$fieldList,
+				'cache_pages',
+				'page_id=' . $pageId,
+				'',
+				'reg1'
+			);
+		} else {
+			$cachedPages = $this->pageCache->getByTag('pageId_' . $pageId);
+		}
 
 		return $cachedPages;
 	}
@@ -384,13 +410,38 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	 */
 	function getCacheInformation_entry($identifier) {
 		$cacheInformation = array();
-		$cachedPage = $this->pageCache->get($identifier);
 
-		if ($cachedPage !== false) {
-			$cacheInformation = $cachedPage;
+		if (!$this->useCachingFramework) {
+			$identifier = intval($identifier);
+			$cachedPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'cache_pages', 'id=' . $identifier);
+			if (is_array($cachedPages) && count($cachedPages)) {
+				$cacheInformation = $cachedPages[0];
+			}
+		} else {
+			$cachedPage = $this->pageCache->get($identifier);
+			if ($cachedPage !== FALSE) {
+				$cacheInformation = $cachedPage;
+			}
 		}
 
 		return $cacheInformation;
+	}
+
+	/**
+	 * Gets the pages cache object (if caching framework is enabled).
+	 *
+	 * @return t3lib_cache_frontend_AbstractFrontend
+	 */
+	protected function getPageCache() {
+		if (!$this->useCachingFramework) {
+			throw new RuntimeException('Caching framework is not enabled.');
+		}
+
+		if (!isset($this->pageCache)) {
+			$this->pageCache = $GLOBALS['typo3CacheManager']->getCache('cache_pages');
+		}
+
+		return $this->pageCache;
 	}
 }
 

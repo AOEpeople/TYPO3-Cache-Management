@@ -179,13 +179,23 @@ class tx_cachemgm_mod {
 		$output.='<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/> <br/>(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
 
 
-		if (t3lib_div::_POST('_test_cache_hash'))	{
-			$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-				'identifier,tags,count(*)',
-				'cache_hash',
-				'1=1',
-				'ident'
-			);
+		if (t3lib_div::_POST('_test_cache_hash')) {
+			if (!defined('TYPO3_UseCachingFramework') || !TYPO3_UseCachingFramework) {
+				$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+					'ident,count(*)',
+					'cache_hash',
+					'1=1',
+					'ident'
+				);
+			} else {
+				$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+					'tag,count(*)',
+					'cachingframework_cache_hash_tags',
+					'1=1',
+					'tag'
+				);
+			}
+
 			$output.= $this->debugRows($cache_hash_counts,'',1);
 		}
 
