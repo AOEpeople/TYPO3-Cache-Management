@@ -1,6 +1,7 @@
-2010-06-10  Oliver Hader  <oliver@typo3.org>
+2010-06-11  Oliver Hader  <oliver@typo3.org>
 
 	* Cleanup: Fixed SVN properties
+	* Set version to 2.0.1
 
 2010-06-10  Oliver Hader  <oliver@typo3.org>
 
