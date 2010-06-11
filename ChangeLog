@@ -1,5 +1,9 @@
 2010-06-10  Oliver Hader  <oliver@typo3.org>
 
+	* Cleanup: Fixed SVN properties
+
+2010-06-10  Oliver Hader  <oliver@typo3.org>
+
 	* Fixed bug: Cache Management does not work if caching framework is not enabled
 
 2009-04-29  Michael Klapper  <michael.klapper@aoemedia.de>
