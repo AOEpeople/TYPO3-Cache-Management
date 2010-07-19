@@ -82,7 +82,7 @@ class tx_cachemgm_lib {
 			$params['pObj']->applicationData['tx_crawler']['log'][] = 'RE_CACHE (cachemgm), old status: '.$params['disableAcquireCacheData'];
 
 				// Disables a look-up for cached page data - thus resulting in re-generation of the page even if cached.
-			$params['disableAcquireCacheData'] = TRUE;
+			$ref->all = '';
 		}
 	}
 }
