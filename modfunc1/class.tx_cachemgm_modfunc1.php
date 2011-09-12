@@ -247,8 +247,11 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(t3lib_BEfunc::datetime($inf['tstamp'])).' / '.htmlspecialchars(t3lib_BEfunc::calcAge($inf['tstamp']-time())).'</td>';
 					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(t3lib_BEfunc::datetime($inf['expires'])).' / '.htmlspecialchars(t3lib_BEfunc::calcAge($inf['expires']-time())).'</td>';
 
-					$tCells[]='<td>'.htmlspecialchars($inf['id']).'<a href="index.php?id='.$this->pObj->id.'&showID='.htmlspecialchars($inf['hash']).'"> - <u>Details</u></a></td>';
-					$tCells[]='<td>'.htmlspecialchars($inf['hash']).'</td>';
+					$id = $this->useCachingFramework ? '' : $inf['id'];
+					$hash = $this->useCachingFramework ? $inf['identifier'] : $inf['hash'];
+
+					$tCells[]='<td>'.($id?(htmlspecialchars($id).' - '):'').'<a href="index.php?id='.$this->pObj->id.'&showID='.htmlspecialchars($hash).'"><u>Details</u></a></td>';
+					$tCells[]='<td>'.htmlspecialchars($hash).'</td>';
 
 						// Compile Row:
 					$trClass = ($page_sizes && strlen($inf['HTML']) && strlen($inf['HTML'])<1000 ? 'bgColor6' : 'bgColor'.($cc%2 ? '-20':'-10'));
