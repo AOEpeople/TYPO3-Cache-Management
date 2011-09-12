@@ -171,7 +171,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		$output = '';
 		$cc=0;
 		foreach($tree->tree as $row)	{
-			
+
 			if ($flushAll)	{
 				$tce = t3lib_div::makeInstance('t3lib_TCEmain');
 				$tce->clear_cacheCmd(intval($row['row']['uid']));
@@ -388,7 +388,8 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 				str_pad($hash_base['MP'],10,' ',STR_PAD_LEFT).'_'.
 				str_pad($hash_base['gr_list'],10,' ',STR_PAD_LEFT).'_'.
 				str_pad((is_array($cacheMetaData) ? htmlspecialchars($cacheMetaData['config']['sys_language_uid']) : ''),3,'0',STR_PAD_LEFT).'_'.
-				(is_array($hash_base['cHash']) && count($hash_base['cHash']) ? htmlspecialchars(t3lib_div::fixed_lgd(t3lib_div::implodeArrayForUrl('',$hash_base['cHash']),200)) : '')
+				(is_array($hash_base['cHash']) && count($hash_base['cHash']) ? htmlspecialchars(t3lib_div::fixed_lgd(t3lib_div::implodeArrayForUrl('',$hash_base['cHash']),200)) : '').'_'.
+				t3lib_div::shortMd5(serialize($hash_base['all']))
 				] = $c;
 		}
 
