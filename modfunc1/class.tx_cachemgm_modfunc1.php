@@ -417,7 +417,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 
 		if (!$this->useCachingFramework) {
 			$identifier = intval($identifier);
-			$cachedPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'cache_pages', 'id=' . $identifier);
+			$cachedPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'cache_pages', 'hash=' . $identifier);
 			if (is_array($cachedPages) && count($cachedPages)) {
 				$cacheInformation = $cachedPages[0];
 			}
