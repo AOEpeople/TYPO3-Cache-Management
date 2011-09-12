@@ -362,7 +362,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 				'reg1'
 			);
 		} else {
-			$cachedPages = $this->pageCache->getByTag('pageId_' . $pageId);
+			$cachedPages = $this->getPageCache()->getByTag('pageId_' . $pageId);
 		}
 
 		return $cachedPages;
@@ -419,7 +419,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 				$cacheInformation = $cachedPages[0];
 			}
 		} else {
-			$cachedPage = $this->pageCache->get($identifier);
+			$cachedPage = $this->getPageCache()->get($identifier);
 			if ($cachedPage !== FALSE) {
 				$cacheInformation = $cachedPage;
 			}
