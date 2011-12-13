@@ -173,7 +173,9 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		foreach($tree->tree as $row)	{
 
 			if ($flushAll)	{
+				/* @var $tce t3lib_TCEmain */
 				$tce = t3lib_div::makeInstance('t3lib_TCEmain');
+				$tce->start($row['row'], 'delete');
 				$tce->clear_cacheCmd(intval($row['row']['uid']));
 			}
 
