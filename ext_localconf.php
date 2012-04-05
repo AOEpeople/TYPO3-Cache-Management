@@ -8,4 +8,7 @@ if (TYPO3_MODE=='FE')	{
 	// Register with "crawler" extension:
 $TYPO3_CONF_VARS['EXTCONF']['crawler']['procInstructions']['tx_cachemgm_recache'] = 'Re-cache pages';
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['cliKeys']['cachemgm_log'] 			= array('EXT:cachemgm/cli/cachemgm_log.php','_CLI_lowlevel');
+
+
 ?>

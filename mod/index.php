@@ -27,7 +27,7 @@
 /**
  * Module: Cache management, global module in Tools >
  *
- * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
+ * @author	Kasper Skï¿½rhï¿½j <kasperYYYY@typo3.com>
  */
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
@@ -60,6 +60,8 @@ unset($MCONF);
 require ('conf.php');
 require ($BACK_PATH.'init.php');
 require ($BACK_PATH.'template.php');
+
+require_once(t3lib_extMgm::extPath('cachemgm').'mod/class.tx_cachemgm_mod_cachingFrameworkInfoService.php');
 $BE_USER->modAccess($MCONF,1);
 
 /**
@@ -91,6 +93,8 @@ class tx_cachemgm_mod {
 		$this->doc = t3lib_div::makeInstance("noDoc");
 		$this->doc->form='<form action="" method="post">';
 		$this->doc->backPath = $BACK_PATH;
+		$this->doc->styleSheetFile2 = '../typo3conf/ext/cachemgm/mod/styles.css';
+		
 				// JavaScript
 		$this->doc->JScode = '
 		<script language="javascript" type="text/javascript">
@@ -116,6 +120,7 @@ class tx_cachemgm_mod {
 		$this->MOD_MENU = array(
 			"function" => array(
 				"cache_stat" => "Global Cache Tables Information",
+				"cachingframework_stat" => "Cachingframework Infos",
 				'db_bm' => 'SELECT benchmarks',
 				'file_bm' => 'File System benchmarks'
 			)
@@ -140,10 +145,13 @@ class tx_cachemgm_mod {
 		$this->content.=$this->doc->header("Cache Management Tools, Analysis and Benchmarking");
 		$this->content.=$this->doc->spacer(5);
 		$this->content.=$this->doc->section('',$menu);
-
+		
 		switch($this->MOD_SETTINGS["function"])	{
 			case "cache_stat":
 				$this->content.= $this->cache_stat();
+			break;
+			case "cachingframework_stat":
+				$this->content.= $this->cachingframework_stat();
 			break;
 			case "db_bm":
 				$this->content.= $this->db_bm();
@@ -171,12 +179,7 @@ class tx_cachemgm_mod {
 	 */
 	function cache_stat()	{
 
-		$output.='<br/><br/>';
-		$output.='<h3>Cache Hash table<h3/>';
-		$output.='<p>...
-					<p/>';
-		$output.='<br/><br/><br/>';
-		$output.='<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/> <br/>(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
+		$output.='<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/> <br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
 
 
 		if (t3lib_div::_POST('_test_cache_hash')) {
@@ -196,10 +199,43 @@ class tx_cachemgm_mod {
 				);
 			}
 
-			$output.= $this->debugRows($cache_hash_counts,'',1);
+			$output.= 'Count:'.$this->debugRows($cache_hash_counts,'',1);
 		}
 
 		$this->content.=$this->doc->section('Showing "cache_hash" numbers:',$output);
+	}
+	
+	/**
+	 * Creates stats on the cache_hash table
+	 *
+	 * @return	void
+	 */
+	function cachingframework_stat()	{
+		$infoService = t3lib_div::makeInstance('tx_cachemgm_mod_cachingFrameworkInfoService');
+		$subAction = t3lib_div::_GP('cachingFrameWorkSubAction');
+		$output='';
+		switch ($subAction) {
+			case 'details':
+				$cacheId = t3lib_div::_GP('cacheId');
+				$output .= $infoService->printOverviewForCache($cacheId);
+				$this->content.=$this->doc->section('Details for Cache: '.$cacheId,$output);
+				break;
+			case 'flush':
+				$cacheId = t3lib_div::_GP('cacheId');
+				$output .= '<p class="warning">'.$cacheId.' flushed!</p>';
+				//$infoService->flushCacheByCacheId($cacheId);
+				
+			default:
+				$output .= "<p>You can adjust the Caching configuration in your localconf.php. Using <pre>\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>";
+				$output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: '."\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_VariableFrontend';".'</p>';
+				$output .= $infoService->printOverview();
+				$this->content.=$this->doc->section('Available Cache Backends:',$output);				
+			break;
+			
+		}
+		
+
+		
 	}
 
 	/**
