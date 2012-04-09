@@ -9,18 +9,58 @@
 class Tx_Cachemgm_Cli_CacheStatistic {
 	private $counts = array();
 	private $timeSums = array();
+	private $idendifiers = array();
 
+	const CACHE_ID_SEPERATOR = '   |   ';
+	
 	/**
 	 * @param array $log
 	 */
-	public function addLog(array $log) {
+	public function addLogForActionTimeStat(array $log) {
+		if (empty($log['cache']) || $log['cache'] == '-') {
+			return;
+		}
+		$this->timeSums[$log['cache']][$log['action']] = $this->timeSums[$log['cache']][$log['action']]+($log['time']);
+	}
+	
+	/**
+	 * @param array $log
+	 */
+	public function addLogForIdendifierStat(array $log) {
+		if (empty($log['cache']) || $log['cache'] == '-') {
+			return;
+		}
+		$this->idendifiers[$log['cache'].self::CACHE_ID_SEPERATOR.$log['id']]++;
+	}
+	
+	/**
+	 * @param array $log
+	 */
+	public function addLogForActionCountStat(array $log) {
 		if (empty($log['cache']) || $log['cache'] == '-') {
 			return;
 		}
 		$this->counts[$log['cache']][$log['action']]++;
-		$this->timeSums[$log['cache']][$log['action']] = $this->timeSums[$log['cache']][$log['action']]+($log['time']);
 	}
 	
+	/**
+	 * returns the top n identifiers
+	 * @param integer $n
+	 */
+	public function getTopIdendifiers($n=100) {
+		arsort($this->idendifiers);
+		$result = array();
+		$i=0;
+		foreach ($this->idendifiers as $id => $count) {
+			$i++;
+			if ($i>$n) {
+				return $result;
+			}
+			$parts = explode(self::CACHE_ID_SEPERATOR, $id);
+			$result[] = array('cache'=> $parts[0], 'id'=> $parts[1], 'count' => $count);
+		}
+		return $result;
+	}
 	
 	/**
 	 * Echos the statistic - used as shutdown or sigterm callback

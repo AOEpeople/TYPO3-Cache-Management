@@ -6,7 +6,7 @@ declare(ticks = 1);
  pcntl_signal(SIGTERM, "signal_handler");
  pcntl_signal(SIGINT, "signal_handler");
 
- $cliObj = t3lib_div::makeInstance('Tx_Cachemgm_Cli_CachemgmLog');
+ $cliObj = t3lib_div::makeInstance('Tx_Cachemgm_Cli_CachemgmTop');
  
  
  function signal_handler($signal) {
@@ -23,7 +23,7 @@ if (isset($cliObj->cli_args['-h']) || isset($cliObj->cli_args['--help']))	{
 	exit;
 }
 
-$cliObj->showLogAction();
+$cliObj->showTopAction();
 
 
 ?>

@@ -43,6 +43,11 @@ class Tx_Cachemgm_Cache_MemoryLogWriter implements t3lib_Singleton {
 	const ACTION_HASMISS = 'HASMISS';
 	const ACTION_HASHIT = 'HASHIT';
 	
+	const ACTION_REQOSTART = 'REQO_START';
+	const ACTION_REQOEND = 'REQO_END';
+	
+	
+	
 	const ACTION_LOGINIT = 'INIT';
 	
 	protected $communicationMode = 'msg'; // one of msg = Unix Mesage / shmop = Unix Shared Memory Operation / shm -  Shared memory storage
@@ -108,13 +113,13 @@ class Tx_Cachemgm_Cache_MemoryLogWriter implements t3lib_Singleton {
 		}
 		switch ($this->communicationMode) {
 			case 'msg':
-				msg_send($this->communicationRessourceHandle, 1, $cacheLogData, true, false); 
+				@msg_send($this->communicationRessourceHandle, 1, $cacheLogData, true, false); 
 			break;
 			case 'shmop':
-				shmop_write($this->communicationRessourceHandle, serialize($cacheLogData), 0);
+				@shmop_write($this->communicationRessourceHandle, serialize($cacheLogData), 0);
 			break;
 			case 'shm':
-				shm_put_var($this->communicationRessourceHandle,1,$cacheLogData);
+				@shm_put_var($this->communicationRessourceHandle,1,$cacheLogData);
 			break;
 		}
 		self::$i++;

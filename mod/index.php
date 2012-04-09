@@ -227,7 +227,7 @@ class tx_cachemgm_mod {
 				
 			default:
 				$output .= "<p>You can adjust the Caching configuration in your localconf.php. Using <pre>\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>";
-				$output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: '."\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_VariableFrontend';".'</p>';
+				$output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: '."\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend';".'</p>';
 				$output .= $infoService->printOverview();
 				$this->content.=$this->doc->section('Available Cache Backends:',$output);				
 			break;

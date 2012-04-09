@@ -41,12 +41,16 @@ class Tx_Cachemgm_Cache_MemoryLogReader extends Tx_Cachemgm_Cache_MemoryLogWrite
 	 * Blocking wrapper call to get log - will return the next log matching the criteria.
 	 * @param integer $previousNr
 	 * @param string $cacheFilter
+	 * @param string $actionFilter
 	 * @return array with cache, cacheIdendifier, action, timestamp, timedifference
 	 */
-	public function getNextLog( $previousNr, $cacheFilter = NULL  ) {
+	public function getNextLog( $previousNr, $cacheFilter = NULL, $actionFilter = NULL  ) {
 		while(TRUE) {
 			$log = $this->getLastLog();
-			if (is_array($log) && $log['nr'] != $previousNr && ( is_null($cacheFilter) || $cacheFilter == $log['cache']) ) {				
+			if (is_array($log) && $log['nr'] != $previousNr && 
+				( is_null($cacheFilter) || $cacheFilter == $log['cache']) &&
+				( is_null($actionFilter) || $actionFilter == $log['action']) 
+				) {				
 				return $log;
 			}
 		}	
