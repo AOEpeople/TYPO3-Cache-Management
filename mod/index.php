@@ -177,23 +177,21 @@ class tx_cachemgm_mod {
 	 *
 	 * @return	void
 	 */
-	function cache_stat()	{
-
+	function cache_stat() {
 		$output.='<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/> <br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
-
 
 		if (t3lib_div::_POST('_test_cache_hash')) {
 			if (!defined('TYPO3_UseCachingFramework') || !TYPO3_UseCachingFramework) {
 				$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 					'ident,count(*)',
-					'cache_hash',
+					$this->getCacheHashTable(),
 					'1=1',
 					'ident'
 				);
 			} else {
 				$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 					'tag,count(*)',
-					'cachingframework_cache_hash_tags',
+					$this->getCacheHashTagsTable(),
 					'1=1',
 					'tag'
 				);
@@ -203,6 +201,34 @@ class tx_cachemgm_mod {
 		}
 
 		$this->content.=$this->doc->section('Showing "cache_hash" numbers:',$output);
+	}
+
+	/**
+	 * Gets table name containing cache-hashes.
+	 *
+	 * @return string
+	 */
+	protected function getCacheHashTable() {
+		if (version_compare(TYPO3_version, '4.6', '>=')) {
+			$tableName = 'cf_cache_hash';
+		} else {
+			$tableName = 'cache_hash';
+		}
+		return $tableName;
+	}
+
+	/**
+	 * Gets table name containing cache-hash tags.
+	 *
+	 * @return string
+	 */
+	protected function getCacheHashTagsTable() {
+		if (version_compare(TYPO3_version, '4.6', '>=')) {
+			$tableName = 'cf_cache_hash_tags';
+		} else {
+			$tableName = 'cachingframework_cache_hash_tags';
+		}
+		return $tableName;
 	}
 	
 	/**
