@@ -45,6 +45,17 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 		$content .= '<li>Frontend Classname:'.get_class($cache);
 		$content .= '<li>Backend Classname:'.get_class($backend);
 		
+		$reflectionBackend = new ReflectionObject($backend);
+		$properties = $reflectionBackend->getProperties();
+		foreach ($properties as $key=>$value) {
+				$properties[$key]->setAccessible(true);
+				$value = $properties[$key]->getValue($backend);
+				if (is_object($value)) {
+						$value = 'Object:'.get_class($value);
+				}
+				$content .= '<li>*Backend property "'.$properties[$key]->getName().'":'.$value;
+		}
+		
 		if ($backend instanceof t3lib_cache_backend_FileBackend) {
 			$content .= '<li>Cache Folder:'.$backend->getCacheDirectory();
 			if (!is_writeable($backend->getCacheDirectory())) {
