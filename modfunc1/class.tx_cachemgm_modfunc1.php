@@ -47,10 +47,6 @@
  *
  */
 
-require_once(PATH_t3lib.'class.t3lib_pagetree.php');
-require_once(PATH_t3lib.'class.t3lib_extobjbase.php');
-require_once(PATH_t3lib.'class.t3lib_tcemain.php');
-
 
 /**
  * Cache management extension

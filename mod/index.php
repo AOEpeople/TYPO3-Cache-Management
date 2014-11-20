@@ -59,9 +59,7 @@
 unset($MCONF);
 require ('conf.php');
 require ($BACK_PATH.'init.php');
-require ($BACK_PATH.'template.php');
 
-require_once(t3lib_extMgm::extPath('cachemgm').'mod/class.tx_cachemgm_mod_cachingFrameworkInfoService.php');
 $BE_USER->modAccess($MCONF,1);
 
 /**
