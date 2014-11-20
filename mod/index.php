@@ -56,11 +56,9 @@
  *
  */
 
-unset($MCONF);
-require ('conf.php');
-require ($BACK_PATH.'init.php');
 
-$BE_USER->modAccess($MCONF,1);
+$BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
+
 
 /**
  * Backend module providing cache management overview and performance analysis.
