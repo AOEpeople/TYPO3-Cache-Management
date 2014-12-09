@@ -39,8 +39,14 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 	
 	public function printOverviewForCache($cacheId) {
 		$cache = $this->cacheManager->getCache($cacheId);
-		$backend = $cache->getBackend();	
-		$content = '<a class="button" href="?cachingFrameWorkSubAction=overview">Back to Overview</a>';
+		$backend = $cache->getBackend();
+        $overviewURL = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl(
+            'tools_txcachemgmM1',
+            array(
+                'cachingFrameWorkSubAction' => 'overview'
+            )
+        );
+		$content = '<a class="button" href="'.$overviewURL.'">Back to Overview</a>';
 		$content .= '<ul>';
 		$content .= '<li>Frontend Classname:'.get_class($cache);
 		$content .= '<li>Backend Classname:'.get_class($backend);
@@ -89,10 +95,27 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 			if (isset($conf['options']) && !empty($conf['options'])) {
 				$options = str_replace('array','',var_export($conf['options'],true));
 			}
+
+            $detailsURL = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl(
+                'tools_txcachemgmM1',
+                array(
+                    'cachingFrameWorkSubAction' => 'details',
+                    'cacheId' => $cacheId
+                )
+            );
+
+            $flushURL = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl(
+                'tools_txcachemgmM1',
+                array(
+                    'cachingFrameWorkSubAction' => 'flush',
+                    'cacheId' => $cacheId
+                )
+            );
+
 			$content .= '<td>'.$options.'</td>';
 			$content .='<td>
-							<a class="button" href="?cachingFrameWorkSubAction=details&cacheId='.$cacheId.'">Details</a>
-							<a class="button warning" href="?cachingFrameWorkSubAction=flush&cacheId='.$cacheId.'" onclick="return confirm(\'really?\')">Flush!</a>					
+							<a class="button" href="'.$detailsURL.'">Details</a>
+							<a class="button warning" href="'.$flushURL.'" onclick="return confirm(\'really?\')">Flush!</a>
 						</td></tr>';
 		}
 		$content .= '</table>';
@@ -140,8 +163,3 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 		return str_replace('t3lib_cache_backend_','',$backend);
 	}
 }
-
-
-
-
-?>

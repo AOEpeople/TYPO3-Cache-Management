@@ -56,6 +56,7 @@
  *
  */
 
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
 
@@ -86,7 +87,7 @@ class tx_cachemgm_mod {
 
 		$this->menuConfig();
 
-		$this->doc = t3lib_div::makeInstance("noDoc");
+		$this->doc = GeneralUtility::makeInstance("noDoc");
 		$this->doc->form='<form action="" method="post">';
 		$this->doc->backPath = $BACK_PATH;
 		$this->doc->styleSheetFile2 = '../typo3conf/ext/cachemgm/mod/styles.css';
@@ -122,7 +123,7 @@ class tx_cachemgm_mod {
 			)
 		);
 			// CLEANSE SETTINGS
-		$this->MOD_SETTINGS = t3lib_BEfunc::getModuleData($this->MOD_MENU, t3lib_div::_GP("SET"), $this->MCONF["name"], "ses");
+		$this->MOD_SETTINGS = t3lib_BEfunc::getModuleData($this->MOD_MENU, GeneralUtility::_GP("SET"), $this->MCONF["name"], "ses");
 	}
 
 	/**
@@ -176,22 +177,13 @@ class tx_cachemgm_mod {
 	function cache_stat() {
 		$output.='<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/> <br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
 
-		if (t3lib_div::_POST('_test_cache_hash')) {
-			if (!defined('TYPO3_UseCachingFramework') || !TYPO3_UseCachingFramework) {
-				$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-					'ident,count(*)',
-					$this->getCacheHashTable(),
-					'1=1',
-					'ident'
-				);
-			} else {
-				$cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-					'tag,count(*)',
-					$this->getCacheHashTagsTable(),
-					'1=1',
-					'tag'
-				);
-			}
+		if (GeneralUtility::_POST('_test_cache_hash')) {
+            $cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+                'tag,count(*)',
+                $this->getCacheHashTagsTable(),
+                '1=1',
+                'tag'
+            );
 
 			$output.= 'Count:'.$this->debugRows($cache_hash_counts,'',1);
 		}
@@ -233,17 +225,17 @@ class tx_cachemgm_mod {
 	 * @return	void
 	 */
 	function cachingframework_stat()	{
-		$infoService = t3lib_div::makeInstance('tx_cachemgm_mod_cachingFrameworkInfoService');
-		$subAction = t3lib_div::_GP('cachingFrameWorkSubAction');
+		$infoService = GeneralUtility::makeInstance('tx_cachemgm_mod_cachingFrameworkInfoService');
+		$subAction = GeneralUtility::_GP('cachingFrameWorkSubAction');
 		$output='';
 		switch ($subAction) {
 			case 'details':
-				$cacheId = t3lib_div::_GP('cacheId');
+				$cacheId = GeneralUtility::_GP('cacheId');
 				$output .= $infoService->printOverviewForCache($cacheId);
 				$this->content.=$this->doc->section('Details for Cache: '.$cacheId,$output);
 				break;
 			case 'flush':
-				$cacheId = t3lib_div::_GP('cacheId');
+				$cacheId = GeneralUtility::_GP('cacheId');
 				$output .= '<p class="warning">'.$cacheId.' flushed!</p>';
 				//$infoService->flushCacheByCacheId($cacheId);
 				
@@ -267,8 +259,8 @@ class tx_cachemgm_mod {
 	 */
 	function db_bm()	{
 
-		$TEST_db_access_all = t3lib_div::_POST('_test_db_access_ALL');
-		$TEST_db_access_number = t3lib_div::intInRange(t3lib_div::_POST('_test_db_access_number'),1,2000,100);
+		$TEST_db_access_all = GeneralUtility::_POST('_test_db_access_ALL');
+		$TEST_db_access_number = t3lib_utility_Math::forceIntegerInRange(GeneralUtility::_POST('_test_db_access_number'),1,2000,100);
 
 		$output.='<br/><br/>';
 		$output.='<h3>DB record Access<h3/>';
@@ -277,7 +269,7 @@ class tx_cachemgm_mod {
 					The test works best when the number of records in a table row is higher than the number of records read. Especially if you perform the test multiple times you will get increasingly "better performance" in the first pass because of caching.
 					Ideally your test should start out with a rebooted and non-busy website to make sure no file/db caches are full. Well, you figure...<br>
 					In the sample below you can see that 100 records are tested on for the PRIMARY key. It takes 42 ms meaning each record took 0.4 ms to read. When using another index for the table only 31 records was selected. It took 14ms and divided by 31 it ends at 0.5 ms per record.<br>
-					<img src="db_read.png" hspace="5" vspace="5" alt="" />
+					<img src="'.t3lib_extMgm::extRelPath('cachemgm').'mod/db_read.png" hspace="5" vspace="5" alt="" />
 					<p/>';
 		$output.='<input type="text" name="_test_db_access_number" value="'.htmlspecialchars($TEST_db_access_number).'" /> number of records to read.<br/>';
 		$output.='<input type="submit" name="_test_db_access_ALL" value="Test ALL tables" onclick="return confirm(\'You sure?\');"/>';
@@ -304,10 +296,10 @@ class tx_cachemgm_mod {
 				$count = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows('*', $table);
 			}
 
-			if (t3lib_div::_POST('_test_db_access_'.$table))	{
+			if (GeneralUtility::_POST('_test_db_access_'.$table))	{
 				$output.='<input type="submit" name="_test_db_access_'.$table.'" value="Reload Test for '.$table.'" />';
 			}
-			if ($TEST_db_access_all || t3lib_div::_POST('_test_db_access_'.$table))	{
+			if ($TEST_db_access_all || GeneralUtility::_POST('_test_db_access_'.$table))	{
 					// All keys, find those that are first in sequence:
 				$allKeys = $GLOBALS['TYPO3_DB']->admin_get_keys($table);
 
@@ -341,25 +333,25 @@ class tx_cachemgm_mod {
 			// Reading records 1:
 		foreach($info as $tableKey => $data)	{
 			if (is_array($data['Records']))	{
-				$pt_record = t3lib_div::milliseconds();
+				$pt_record = GeneralUtility::milliseconds();
 				foreach($data['Records'] as $rec)	{
 					$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*',$data['Table'],$data['Field'].'='.$GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']],$data['Table']),'','',1);
 					#echo count($rows);
 				}
-				$td = t3lib_div::milliseconds()-$pt_record;
+				$td = GeneralUtility::milliseconds()-$pt_record;
 				$info[$tableKey]['Pass1'] = $td;
-#				$info[$tableKey]['Pass1_Read100'] = round((t3lib_div::milliseconds()-$pt_record)/count($data['Records'])*100);
+#				$info[$tableKey]['Pass1_Read100'] = round((GeneralUtility::milliseconds()-$pt_record)/count($data['Records'])*100);
 			}
 		}
 
 			// Reading records 2:
 		foreach($info as $tableKey => $data)	{
 			if (is_array($data['Records']))	{
-				$pt_record = t3lib_div::milliseconds();
+				$pt_record = GeneralUtility::milliseconds();
 				foreach($data['Records'] as $rec)	{
 					$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*',$data['Table'],$data['Field'].'='.$GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']],$data['Table']),'','',1);
 				}
-				$td = t3lib_div::milliseconds()-$pt_record;
+				$td = GeneralUtility::milliseconds()-$pt_record;
 				$info[$tableKey]['Pass2'] = $td;
 			}
 		}
@@ -367,11 +359,11 @@ class tx_cachemgm_mod {
 			// Reading records 3:
 		foreach($info as $tableKey => $data)	{
 			if (is_array($data['Records']))	{
-				$pt_record = t3lib_div::milliseconds();
+				$pt_record = GeneralUtility::milliseconds();
 				foreach($data['Records'] as $rec)	{
 					$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*',$data['Table'],$data['Field'].'='.$GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']],$data['Table']),'','',1);
 				}
-				$td = t3lib_div::milliseconds()-$pt_record;
+				$td = GeneralUtility::milliseconds()-$pt_record;
 				$info[$tableKey]['Pass3'] = $td;
 			}
 
@@ -391,23 +383,23 @@ class tx_cachemgm_mod {
 	 */
 	function file_bm()	{
 
-		$TEST_file_access = t3lib_div::_POST('_test_file_access');
-		$TEST_file_write = t3lib_div::_POST('_test_file_write');
-		$TEST_file_access_number = t3lib_div::intInRange(t3lib_div::_POST('_test_file_access_number'),1,200,10);
-		$TEST_file_levels = t3lib_div::intInRange(t3lib_div::_POST('_test_file_levels'),0,99,0);
+		$TEST_file_access = GeneralUtility::_POST('_test_file_access');
+		$TEST_file_write = GeneralUtility::_POST('_test_file_write');
+		$TEST_file_access_number = t3lib_utility_Math::forceIntegerInRange(GeneralUtility::_POST('_test_file_access_number'),1,200,10);
+		$TEST_file_levels = t3lib_utility_Math::forceIntegerInRange(GeneralUtility::_POST('_test_file_levels'),0,99,0);
 
 		$output.='<br/><br/>';
 		$output.='<h3>File Access<h3/>';
 		$output.='<p>For each directory listed below this test will pick a number of random files and read the full contents of them while measuring the time it takes. This can give you a hint if file access is slow on your system.<br/>
 					The output shows the files read, their size and three columns 0,1,2 which shows the read time for three consecutive read operations. Usually column 0 will contain a higher number than column 1 and 2 which should be the same since the first read (column 0 time) will indicate the performance without the file system cache and read 2 and 3 (Columns 1+2) will indicate the delivery when the file system has cached the file. Also, an average is calculated.<br/>
-					<img src="file_access.png" hspace="5" vspace="5" alt="" /><p/>';
+					<img src="'.t3lib_extMgm::extRelPath('cachemgm').'mod/file_access.png" hspace="5" vspace="5" alt="" /><p/>';
 		$output.='<input type="text" name="_test_file_access_number" value="'.htmlspecialchars($TEST_file_access_number).'" /> number of files picked.<br/>';
 		$output.='<input type="submit" name="_test_file_access" value="Test File Access Times" />';
 
 		$output.='<br/><br/>';
 		$output.='<h3>File Write<h3/>';
 		$output.='<p>Will write 3 temporary files of 100kb to each directory below, measure the time it takes to write, read and delete the files. The output will display that in milliseconds in a table like the one shown here:<br/>
-					<img src="file_write.png" hspace="5" vspace="5" alt="" /><p/>';
+					<img src="'.t3lib_extMgm::extRelPath('cachemgm').'mod/file_write.png" hspace="5" vspace="5" alt="" /><p/>';
 		$output.='<input type="submit" name="_test_file_write" value="Test File Write Times" />';
 
 		$output.='<br/><br/><br/>';
@@ -464,7 +456,7 @@ class tx_cachemgm_mod {
 	function getAllFoldersInPath($fileArr,$path,$recursivityLevels=99,$excludePattern='')	{
 		$fileArr[] = $path;
 
-		$dirs = t3lib_div::get_dirs($path);
+		$dirs = GeneralUtility::get_dirs($path);
 		if (is_array($dirs) && $recursivityLevels>0)	{
 			foreach ($dirs as $subdirs)	{
 				if ((string)$subdirs!='' && (!strlen($excludePattern) || !preg_match('/^'.$excludePattern.'$/',$subdirs)))	{
@@ -484,17 +476,17 @@ class tx_cachemgm_mod {
 	 */
 	function getFolderInfo($subpath,$recursivity=99)	{
 		$path = PATH_site.$subpath;
-		$file_bm = t3lib_div::removePrefixPathFromList($this->getAllFoldersInPath(array(),$path,$recursivity),PATH_site);
+		$file_bm = GeneralUtility::removePrefixPathFromList($this->getAllFoldersInPath(array(),$path,$recursivity),PATH_site);
 		$info = array();
-		$postDir = t3lib_div::_POST('_dir');
+		$postDir = GeneralUtility::_POST('_dir');
 		foreach($file_bm as $relPath)	{
 			$relPath.='';
 
-			$pt = t3lib_div::milliseconds();
+			$pt = GeneralUtility::milliseconds();
 
 			$info[$relPath] = array();
 			$info[$relPath]['Directory'] = $relPath;
-			$numFiles = t3lib_div::getFilesInDir(PATH_site.$relPath);
+			$numFiles = GeneralUtility::getFilesInDir(PATH_site.$relPath);
 			$info[$relPath]['numFiles'] = count($numFiles);
 
 			/*
@@ -502,9 +494,9 @@ class tx_cachemgm_mod {
 			foreach($numFiles as $file)	{
 				$sizes+=filesize(PATH_site.$relPath.$file);
 			}
-			$info[$relPath]['bytes'] = t3lib_div::formatSize($sizes);
+			$info[$relPath]['bytes'] = GeneralUtility::formatSize($sizes);
 			*/
-			$info[$relPath]['statInfoMS'] = t3lib_div::milliseconds()-$pt;
+			$info[$relPath]['statInfoMS'] = GeneralUtility::milliseconds()-$pt;
 			$info[$relPath]['Select'] = '<input type="checkbox" value="1" name="_dir['.htmlspecialchars($relPath).']" '.($postDir[$relPath]?'checked="checked"':'').'/>';
 		}
 
@@ -520,10 +512,10 @@ class tx_cachemgm_mod {
 	 */
 	function addFileAccessInfo(&$info,$testAccess=10)	{
 
-		$postDir = t3lib_div::_POST('_dir');
+		$postDir = GeneralUtility::_POST('_dir');
 		foreach($info as $relPath => $infA)	{
 			if ($testAccess > 0 && $postDir[$relPath])	{
-				$numFiles = t3lib_div::getFilesInDir(PATH_site.$relPath);
+				$numFiles = GeneralUtility::getFilesInDir(PATH_site.$relPath);
 				shuffle($numFiles);
 
 				for($a=0;$a<3;$a++)	{
@@ -533,9 +525,9 @@ class tx_cachemgm_mod {
 						$info[$relPath]['testAccess'][$file]['file']=$file;
 						$info[$relPath]['testAccess'][$file]['size']=filesize(PATH_site.$relPath.$file);
 
-						$pt_file=t3lib_div::milliseconds();
-						$fileContents = t3lib_div::getUrl(PATH_site.$relPath.$file);
-						$info[$relPath]['testAccess'][$file][$a]=t3lib_div::milliseconds()-$pt_file;
+						$pt_file=GeneralUtility::milliseconds();
+						$fileContents = GeneralUtility::getUrl(PATH_site.$relPath.$file);
+						$info[$relPath]['testAccess'][$file][$a]=GeneralUtility::milliseconds()-$pt_file;
 
 						$c++;
 						if ($c>=$testAccess)	break;
@@ -571,7 +563,7 @@ class tx_cachemgm_mod {
 	 */
 	function addFileWriteFiles(&$info,$files=3,$contentlength=100000)	{
 
-		$postDir = t3lib_div::_POST('_dir');
+		$postDir = GeneralUtility::_POST('_dir');
 		if ($files > 0 && $contentlength>0)	{
 			$contentString = str_pad('TYPO3 Extension "cachemgm" testing file writing. Should have been deleted by writing process, if not, delete it!!   ',$contentlength,'0123456789ABCDEF'.chr(10));
 
@@ -592,10 +584,10 @@ class tx_cachemgm_mod {
 						// Write them:
 					clearstatcache();
 					foreach($tempFileNames as $number => $fileToWrite)	{
-						$pt_file=t3lib_div::milliseconds();
-						t3lib_div::writeFile(PATH_site.$relPath.$fileToWrite,$contentString);
+						$pt_file=GeneralUtility::milliseconds();
+						GeneralUtility::writeFile(PATH_site.$relPath.$fileToWrite,$contentString);
 						if (file_exists(PATH_site.$relPath.$fileToWrite))	{
-							$info[$relPath]['testWrite'][$fileToWrite]['write']=t3lib_div::milliseconds()-$pt_file;
+							$info[$relPath]['testWrite'][$fileToWrite]['write']=GeneralUtility::milliseconds()-$pt_file;
 						} else {
 							$info[$relPath]['testWrite'][$fileToWrite]['write']='ERROR: NOT WRITTEN!';
 						}
@@ -604,10 +596,10 @@ class tx_cachemgm_mod {
 						// Read back:
 					clearstatcache();
 					foreach($tempFileNames as $number => $fileToWrite)	{
-						$pt_file=t3lib_div::milliseconds();
-						t3lib_div::getURL(PATH_site.$relPath.$fileToWrite);
+						$pt_file=GeneralUtility::milliseconds();
+						GeneralUtility::getURL(PATH_site.$relPath.$fileToWrite);
 						if (file_exists(PATH_site.$relPath.$fileToWrite))	{
-							$info[$relPath]['testWrite'][$fileToWrite]['read']=t3lib_div::milliseconds()-$pt_file;
+							$info[$relPath]['testWrite'][$fileToWrite]['read']=GeneralUtility::milliseconds()-$pt_file;
 						} else {
 							$info[$relPath]['testWrite'][$fileToWrite]['read']='ERROR: NOT EXISTING!';
 						}
@@ -616,10 +608,10 @@ class tx_cachemgm_mod {
 						// Delete them:
 					clearstatcache();
 					foreach($tempFileNames as $number => $fileToWrite)	{
-						$pt_file=t3lib_div::milliseconds();
+						$pt_file=GeneralUtility::milliseconds();
 						unlink(PATH_site.$relPath.$fileToWrite);
 						if (!file_exists(PATH_site.$relPath.$fileToWrite))	{
-							$info[$relPath]['testWrite'][$fileToWrite]['delete']=t3lib_div::milliseconds()-$pt_file;
+							$info[$relPath]['testWrite'][$fileToWrite]['delete']=GeneralUtility::milliseconds()-$pt_file;
 						} else {
 							$info[$relPath]['testWrite'][$fileToWrite]['delete']='ERROR: NOT DELETED!';
 						}
@@ -698,7 +690,7 @@ if (defined("TYPO3_MODE") && $TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/cachemg
 
 
 // Make instance:
-$SOBE = t3lib_div::makeInstance("tx_cachemgm_mod");
+$SOBE = GeneralUtility::makeInstance("tx_cachemgm_mod");
 $SOBE->init();
 $SOBE->main();
 $SOBE->printContent();
