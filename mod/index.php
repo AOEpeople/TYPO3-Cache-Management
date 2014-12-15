@@ -57,6 +57,7 @@
  */
 
 use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use \TYPO3\CMS\Core\Utility\MathUtility;
 
 $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
 
@@ -260,7 +261,7 @@ class tx_cachemgm_mod {
 	function db_bm()	{
 
 		$TEST_db_access_all = GeneralUtility::_POST('_test_db_access_ALL');
-		$TEST_db_access_number = t3lib_utility_Math::forceIntegerInRange(GeneralUtility::_POST('_test_db_access_number'),1,2000,100);
+		$TEST_db_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_db_access_number'),1,2000,100);
 
 		$output.='<br/><br/>';
 		$output.='<h3>DB record Access<h3/>';
@@ -385,8 +386,8 @@ class tx_cachemgm_mod {
 
 		$TEST_file_access = GeneralUtility::_POST('_test_file_access');
 		$TEST_file_write = GeneralUtility::_POST('_test_file_write');
-		$TEST_file_access_number = t3lib_utility_Math::forceIntegerInRange(GeneralUtility::_POST('_test_file_access_number'),1,200,10);
-		$TEST_file_levels = t3lib_utility_Math::forceIntegerInRange(GeneralUtility::_POST('_test_file_levels'),0,99,0);
+		$TEST_file_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_file_access_number'),1,200,10);
+		$TEST_file_levels = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_file_levels'),0,99,0);
 
 		$output.='<br/><br/>';
 		$output.='<h3>File Access<h3/>';
