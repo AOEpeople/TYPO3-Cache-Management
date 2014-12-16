@@ -198,6 +198,7 @@ class tx_cachemgm_mod {
 	 * @return	void
 	 */
 	function cachingframework_stat()	{
+        /* @var $infoService tx_cachemgm_mod_cachingFrameworkInfoService */
 		$infoService = GeneralUtility::makeInstance('tx_cachemgm_mod_cachingFrameworkInfoService');
 		$subAction = GeneralUtility::_GP('cachingFrameWorkSubAction');
 		$output='';
@@ -210,19 +211,14 @@ class tx_cachemgm_mod {
 			case 'flush':
 				$cacheId = GeneralUtility::_GP('cacheId');
 				$output .= '<p class="warning">'.$cacheId.' flushed!</p>';
-				//$infoService->flushCacheByCacheId($cacheId);
-
+				$infoService->flushCacheByCacheId($cacheId);
 			default:
 				$output .= "<p>You can adjust the Caching configuration in your localconf.php. Using <pre>\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>";
 				$output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: '."\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend';".'</p>';
 				$output .= $infoService->printOverview();
 				$this->content.=$this->doc->section('Available Cache Backends:',$output);				
 			break;
-
 		}
-
-
-
 	}
 
 	/**
