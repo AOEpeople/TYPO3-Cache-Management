@@ -31,12 +31,18 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 	public function __construct() {
 		$this->cacheManager = t3lib_div::makeInstance('t3lib_cache_Manager');
 	}
-	
-	public function flushCacheByCacheId($cacheId) {
+
+    /**
+     * @param string $cacheId
+     */
+    public function flushCacheByCacheId($cacheId) {
 		$cache = $this->cacheManager->getCache($cacheId);
 		$cache->flush();
 	}
-	
+
+    /**
+     * @param string $cacheId
+     */
 	public function printOverviewForCache($cacheId) {
 		$cache = $this->cacheManager->getCache($cacheId);
 		$backend = $cache->getBackend();
