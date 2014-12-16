@@ -176,12 +176,12 @@ class tx_cachemgm_mod {
 	 * @return	void
 	 */
 	function cache_stat() {
-		$output.='<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/> <br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
+		$output = '<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/><br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
 
 		if (GeneralUtility::_POST('_test_cache_hash')) {
             $cache_hash_counts = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
                 'tag,count(*)',
-                $this->getCacheHashTagsTable(),
+                'cf_cache_hash_tags',
                 '1=1',
                 'tag'
             );
@@ -192,34 +192,6 @@ class tx_cachemgm_mod {
 		$this->content.=$this->doc->section('Showing "cache_hash" numbers:',$output);
 	}
 
-	/**
-	 * Gets table name containing cache-hashes.
-	 *
-	 * @return string
-	 */
-	protected function getCacheHashTable() {
-		if (version_compare(TYPO3_version, '4.6', '>=')) {
-			$tableName = 'cf_cache_hash';
-		} else {
-			$tableName = 'cache_hash';
-		}
-		return $tableName;
-	}
-
-	/**
-	 * Gets table name containing cache-hash tags.
-	 *
-	 * @return string
-	 */
-	protected function getCacheHashTagsTable() {
-		if (version_compare(TYPO3_version, '4.6', '>=')) {
-			$tableName = 'cf_cache_hash_tags';
-		} else {
-			$tableName = 'cachingframework_cache_hash_tags';
-		}
-		return $tableName;
-	}
-	
 	/**
 	 * Creates stats on the cache_hash table
 	 *
@@ -239,18 +211,18 @@ class tx_cachemgm_mod {
 				$cacheId = GeneralUtility::_GP('cacheId');
 				$output .= '<p class="warning">'.$cacheId.' flushed!</p>';
 				//$infoService->flushCacheByCacheId($cacheId);
-				
+
 			default:
 				$output .= "<p>You can adjust the Caching configuration in your localconf.php. Using <pre>\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>";
 				$output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: '."\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend';".'</p>';
 				$output .= $infoService->printOverview();
 				$this->content.=$this->doc->section('Available Cache Backends:',$output);				
 			break;
-			
-		}
-		
 
-		
+		}
+
+
+
 	}
 
 	/**
