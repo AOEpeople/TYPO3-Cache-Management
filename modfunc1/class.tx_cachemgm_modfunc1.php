@@ -71,7 +71,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	 * Creates this object.
 	 */
 	public function __construct() {
-		$this->useCachingFramework = (defined('TYPO3_UseCachingFramework') && TYPO3_UseCachingFramework);
+		$this->useCachingFramework = (defined('TYPO3_UseCachingFramework') && TYPO3_UseCachingFramework) || t3lib_div::compat_version('6.2');
 	}
 
 
@@ -219,7 +219,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 				foreach($cacheInfo as $c => $inf)	{
 
 						// Cache meta data:
-					$cacheMetaData = unserialize($inf['cache_data']);
+					$cacheMetaData = $inf['cache_data'];
 					$hash_base = unserialize($cacheMetaData['hash_base']);
 					if (is_array($hash_base))	unset($hash_base['cHash']['encryptionKey']);
 
@@ -380,7 +380,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		foreach($cacheInfo as $c => $inf)	{
 
 				// Cache meta data:
-			$cacheMetaData = unserialize($inf['cache_data']);
+			$cacheMetaData = $inf['cache_data'];
 			$hash_base = unserialize($cacheMetaData['hash_base']);
 			if (is_array($hash_base))	unset($hash_base['cHash']['encryptionKey']);
 
