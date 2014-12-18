@@ -313,8 +313,8 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		$html = $cache_row['HTML'];
 		unset($cache_row['HTML']);
 
-		$cache_data = unserialize($cache_row['cache_data']);
-		$cache_data['hash_base'] = unserialize($cache_data['hash_base']);
+		$cache_data = $cache_row['cache_data'];
+		$cache_data['hash_base'] = $cache_data['hash_base'];
 		unset($cache_row['cache_data']);
 
 		ob_start();
@@ -323,8 +323,8 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		ob_end_clean();
 
 
-		$theOutput.= '<h3>Cache record</h3><em>(except HTML and cache_data fields)</em>'.
-						t3lib_div::view_array($cache_row);
+		$theOutput = '<h3>Cache record</h3><em>(except HTML and cache_data fields)</em>'.
+                        \TYPO3\CMS\Core\Utility\DebugUtility::viewArray($cache_row);
 
 		$theOutput.= '<h3>"HTML" field content:</h3>';
 		$theOutput.= '<pre>'.htmlspecialchars($html).'</pre>';
