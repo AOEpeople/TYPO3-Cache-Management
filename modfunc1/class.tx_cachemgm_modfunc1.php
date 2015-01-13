@@ -440,7 +440,8 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		}
 
 		if (!isset($this->pageCache)) {
-			$this->pageCache = $GLOBALS['typo3CacheManager']->getCache('cache_pages');
+		    $typo3CacheManager = t3lib_div::makeInstance('t3lib_cache_Manager');
+			$this->pageCache = $typo3CacheManager->getCache('cache_pages');
 		}
 
 		return $this->pageCache;
