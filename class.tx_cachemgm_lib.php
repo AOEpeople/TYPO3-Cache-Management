@@ -21,27 +21,9 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
-/**
- * Cache Management library
- *
- * @author    Kasper Skårhøj <kasperYYYY@typo3.com>
- */
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- *
- *
- *   53: class tx_cachemgm_lib
- *
- *              SECTION: tslib_fe hooks:
- *   74:     function fe_headerNoCache(&$params, $ref)
- *
- * TOTAL FUNCTIONS: 1
- * (This index is automatically created/updated by the extension "extdeveval")
- *
- */
 
-
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Cache Management Library
@@ -51,46 +33,38 @@
  * @subpackage tx_cachemgm
  */
 class tx_cachemgm_lib {
-
-
-
-
-
-
-
-	/**************************
-	 *
-	 * tslib_fe hooks:
-	 *
-	 **************************/
-
 	/**
-	 * Hook for tslib_fe which disables looking up a page in cache. That is necessary if you want to make sure to re-cache (or re-index!) a page
+	 * Hook for TypoScriptFrontendController which disables looking up a page in cache.
+	 * That is necessary if you want to make sure to re-cache (or re-index!) a page
 	 *
-	 * @param	array		Parameters from frontend
-	 * @param	object		TSFE object (reference under PHP5)
+	 * @param	array $params Parameters from frontend
+	 * @param	TypoScriptFrontendController $ref
 	 * @return	void
+	 * @see TypoScriptFrontendController::headerNoCache()
 	 */
-	function fe_headerNoCache(&$params, $ref)	{
+	public function fe_headerNoCache(&$params, TypoScriptFrontendController $ref)	{
+		if ($this->isCrawlerRunningAndRecachingPage($ref)) {
+			// Simple log message:
+			$ref->applicationData['tx_crawler']['log'][] = 'RE_CACHE (cachemgm), old status: '.$params['disableAcquireCacheData'];
 
-			// Requirements are that the crawler is loaded, a crawler session is running and re-caching requested as processing instruction:
-		if (t3lib_extMgm::isLoaded('crawler')
-				&& $params['pObj']->applicationData['tx_crawler']['running']
-				&& in_array('tx_cachemgm_recache', $params['pObj']->applicationData['tx_crawler']['parameters']['procInstructions']))	{
-
-				// Simple log message:
-			$params['pObj']->applicationData['tx_crawler']['log'][] = 'RE_CACHE (cachemgm), old status: '.$params['disableAcquireCacheData'];
-
-				// Disables a look-up for cached page data - thus resulting in re-generation of the page even if cached.
-			$ref->all = '';
+			// Disables a look-up for cached page data - thus resulting in re-generation of the page even if cached.
+			$params['disableAcquireCacheData'] = true;
 		}
 	}
+
+	/**
+	 * Check if crawler is loaded, a crawler session is running and re-caching is requested as processing instruction
+	 *
+	 * @param TypoScriptFrontendController $tsfe
+	 * @return boolean
+	 */
+	private function isCrawlerRunningAndRecachingPage(TypoScriptFrontendController $tsfe)
+	{
+		if (ExtensionManagementUtility::isLoaded('crawler')
+			&& $tsfe->applicationData['tx_crawler']['running']
+			&& in_array('tx_cachemgm_recache', $tsfe->applicationData['tx_crawler']['parameters']['procInstructions']))	{
+			return true;
+		}
+		return false;
+	}
 }
-
-
-
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cachemgm/class.tx_cachemgm_lib.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cachemgm/class.tx_cachemgm_lib.php']);
-}
-?>
