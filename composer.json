@@ -1,5 +1,5 @@
 {
-    "name": "aoe/cachemgm",
+    "name": "typo3-ter/cachemgm",
     "description": "Provides management of the page caching for high traffic websites",
     "type": "typo3-cms-extension",
     "homepage": "https://forge.typo3.org/projects/extension-cachemgm",
