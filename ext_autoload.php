@@ -1,5 +1,5 @@
 <?php
-$path = t3lib_extMgm::extPath('cachemgm');
+$path = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('cachemgm');
 return array(
     'tx_cachemgm_lib' => $path . 'class.tx_cachemgm_lib.php',
     'tx_cachemgm_modfunc1' => $path . 'modfunc1/class.tx_cachemgm_modfunc1.php',

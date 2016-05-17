@@ -21,32 +21,13 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
-/**
- * Cache management extension
- *
- * $Id: class.tx_cms_webinfo_lang.php,v 1.3 2004/08/26 12:18:49 typo3 Exp $
- *
- * @author	Kasper Skaarhoj <kasperYYYY@typo3.com>
- */
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- *
- *
- *   62: class tx_cachemgm_modfunc1 extends t3lib_extobjbase
- *   69:     function modMenu()
- *   87:     function main()
- *  150:     function renderModule($tree,$page_sizes=FALSE)
- *  286:     function renderID($id)
- *  323:     function getCacheInformation($pageId,$page_sizes)
- *  348:     function sortCacheInfo($cacheInfo)
- *  382:     function getCacheInformation_entry($entryId)
- *
- * TOTAL FUNCTIONS: 7
- * (This index is automatically created/updated by the extension "extdeveval")
- *
- */
 
+use TYPO3\CMS\Backend\Module\AbstractFunctionModule;
+use TYPO3\CMS\Backend\Tree\View\PageTreeView;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Cache management extension
@@ -55,25 +36,12 @@
  * @package TYPO3
  * @subpackage tx_cachemgm
  */
-class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
-	/**
-	 * @var boolean
-	 */
-	protected $useCachingFramework;
-
+class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	/**
 	 * Frontend cache object to table cache_pages.
-	 * @var t3lib_cache_frontend_AbstractFrontend
+	 * @var AbstractFrontend
 	 */
 	protected $pageCache;
-
-	/**
-	 * Creates this object.
-	 */
-	public function __construct() {
-		$this->useCachingFramework = (defined('TYPO3_UseCachingFramework') && TYPO3_UseCachingFramework) || t3lib_div::compat_version('6.2');
-	}
-
 
 	/**
 	 * Returns the menu array
@@ -99,10 +67,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	 * @return	string		Output HTML for the module.
 	 */
 	function main()	{
-		global $BACK_PATH,$LANG,$SOBE;
-
-
-		$showID = t3lib_div::_GP('showID');
+		$showID = GeneralUtility::_GP('showID');
 
 		if ($showID)	{
 			$theOutput = $this->renderID($showID);
@@ -110,22 +75,22 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 			$theOutput = '';
 
 				// Depth selector:
-			$h_func = t3lib_BEfunc::getFuncMenu($this->pObj->id,'SET[depth]',$this->pObj->MOD_SETTINGS['depth'],$this->pObj->MOD_MENU['depth'],'index.php');
+			$h_func = BackendUtility::getFuncMenu($this->pObj->id,'SET[depth]',$this->pObj->MOD_SETTINGS['depth'],$this->pObj->MOD_MENU['depth'],'index.php');
 			$theOutput.= $h_func;
 
 				// Showing the tree:
 				// Initialize starting point of page tree:
 			$treeStartingPoint = intval($this->pObj->id);
-			$treeStartingRecord = t3lib_BEfunc::getRecord('pages', $treeStartingPoint);
-			t3lib_BEfunc::workspaceOL('pages',$treeStartingRecord);
+			$treeStartingRecord = BackendUtility::getRecord('pages', $treeStartingPoint);
+			BackendUtility::workspaceOL('pages',$treeStartingRecord);
 			$depth = $this->pObj->MOD_SETTINGS['depth'];
 
 				// Initialize tree object:
-			$tree = t3lib_div::makeInstance('t3lib_pageTree');
+			$tree = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Tree\\View\\PageTreeView');
 			$tree->init('AND '.$GLOBALS['BE_USER']->getPagePermsClause(1));
 
 				// Creating top icon; the current page
-			$HTML = t3lib_iconWorks::getIconImage('pages', $treeStartingRecord, $GLOBALS['BACK_PATH'],'align="top"');
+			$HTML = IconUtility::getIconImage('pages', $treeStartingRecord, $GLOBALS['BACK_PATH'],'align="top"');
 			$tree->tree[] = array(
 				'row' => $treeStartingRecord,
 				'HTML' => $HTML
@@ -147,7 +112,7 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 				<input type="hidden" name="id" value="'.$this->pObj->id.'" />';
 
 				// Render information table:
-			$theOutput.= $this->renderModule($tree,t3lib_div::_POST('_show_page_sizes')?TRUE:FALSE,t3lib_div::_POST('_flush_all')?TRUE:FALSE);
+			$theOutput.= $this->renderModule($tree,GeneralUtility::_POST('_show_page_sizes')?TRUE:FALSE,GeneralUtility::_POST('_flush_all')?TRUE:FALSE);
 		}
 
 		return $theOutput;
@@ -156,30 +121,28 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	/**
 	 * Rendering the information
 	 *
-	 * @param	array		The Page tree data
-	 * @param	boolean		If set, page sizes are rendered.
-	 * @param	boolean		If set, page cache is flushed.
+	 * @param	PageTreeView $tree The Page tree data
+	 * @param	boolean		$page_sizes If set, page sizes are rendered.
+	 * @param	boolean		$flushAll If set, page cache is flushed.
 	 * @return	string		HTML for the information table.
 	 */
-	function renderModule($tree,$page_sizes=FALSE,$flushAll=FALSE)	{
-
+	function renderModule(PageTreeView $tree,$page_sizes=FALSE,$flushAll=FALSE)	{
 			// Traverse tree:
 		$output = '';
 		$cc=0;
 		foreach($tree->tree as $row)	{
-
 			if ($flushAll)	{
-				/* @var $tce t3lib_TCEmain */
-				$tce = t3lib_div::makeInstance('t3lib_TCEmain');
-				$tce->start($row['row'], 'delete');
-				$tce->clear_cacheCmd(intval($row['row']['uid']));
+				/* @var $dataHandler TYPO3\CMS\Core\DataHandling\DataHandler */
+				$dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
+				$dataHandler->start($row['row'], 'delete');
+				$dataHandler->clear_cacheCmd(intval($row['row']['uid']));
 			}
 
 				// Fetch cache information:
 			$cacheInfo = $this->getCacheInformation($row['row']['uid'],$page_sizes);
 
 				// Row title:
-			$rowTitle = $row['HTML'].t3lib_BEfunc::getRecordTitle('pages',$row['row'],TRUE);
+			$rowTitle = $row['HTML'].BackendUtility::getRecordTitle('pages',$row['row'],TRUE);
 			$cellAttrib = ($row['row']['_CSSCLASS'] ? ' class="'.$row['row']['_CSSCLASS'].'"' : '');
 
 				// Add at least one empty element:
@@ -234,19 +197,19 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 					$tCells[]='<td>'.htmlspecialchars($hash_base['MP']).'</td>';
 					$tCells[]='<td align="center">'.(is_array($cacheMetaData) ? htmlspecialchars($cacheMetaData['config']['sys_language_uid']) : '').'</td>';
 					$tCells[]='<td>'.htmlspecialchars($hash_base['gr_list']).'</td>';
-					$tCells[]='<td>'.(is_array($hash_base['cHash']) && count($hash_base['cHash']) ? htmlspecialchars(t3lib_div::fixed_lgd_cs(t3lib_div::implodeArrayForUrl('',$hash_base['cHash']),200)) : '').'</td>';
-					$tCells[]='<td>'.t3lib_div::shortMd5(serialize($hash_base['all'])).'</td>';
+					$tCells[]='<td>'.(is_array($hash_base['cHash']) && count($hash_base['cHash']) ? htmlspecialchars(GeneralUtility::fixed_lgd_cs(GeneralUtility::implodeArrayForUrl('',$hash_base['cHash']),200)) : '').'</td>';
+					$tCells[]='<td>'.GeneralUtility::shortMd5(serialize($hash_base['all'])).'</td>';
 
 					if ($page_sizes)	{
-						$tCells[]='<td nowrap="nowrap">'.t3lib_div::formatSize(strlen($inf['HTML'])).'</td>';
-						$tCells[]='<td nowrap="nowrap">'.t3lib_div::shortMd5($inf['HTML']).'</td>';
+						$tCells[]='<td nowrap="nowrap">'.GeneralUtility::formatSize(strlen($inf['HTML'])).'</td>';
+						$tCells[]='<td nowrap="nowrap">'.GeneralUtility::shortMd5($inf['HTML']).'</td>';
 					}
 					$tCells[]='<td>'.htmlspecialchars($inf['reg1']?$inf['reg1']:'').'</td>';
-					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(t3lib_BEfunc::datetime($inf['tstamp'])).' / '.htmlspecialchars(t3lib_BEfunc::calcAge($inf['tstamp']-time())).'</td>';
-					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(t3lib_BEfunc::datetime($inf['expires'])).' / '.htmlspecialchars(t3lib_BEfunc::calcAge($inf['expires']-time())).'</td>';
+					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(BackendUtility::datetime($inf['tstamp'])).' / '.htmlspecialchars(BackendUtility::calcAge($inf['tstamp']-time())).'</td>';
+					$tCells[]='<td nowrap="nowrap">'.htmlspecialchars(BackendUtility::datetime($inf['expires'])).' / '.htmlspecialchars(BackendUtility::calcAge($inf['expires']-time())).'</td>';
 
-					$id = $this->useCachingFramework ? '' : $inf['id'];
-					$hash = $this->useCachingFramework ? $inf['identifier'] : $inf['hash'];
+					$id = '';
+					$hash = $inf['identifier'];
 
 					$tCells[]='<td>'.($id?(htmlspecialchars($id).' - '):'').'<a href="index.php?id='.$this->pObj->id.'&showID='.htmlspecialchars($hash).'"><u>Details</u></a></td>';
 					$tCells[]='<td>'.htmlspecialchars($hash).'</td>';
@@ -314,7 +277,6 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 		unset($cache_row['HTML']);
 
 		$cache_data = $cache_row['cache_data'];
-		$cache_data['hash_base'] = $cache_data['hash_base'];
 		unset($cache_row['cache_data']);
 
 		ob_start();
@@ -340,39 +302,18 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	/**
 	 * Fetch caching information for page.
 	 *
-	 * @param	integer		Page ID
-	 * @param	boolean		Selects content column as well if set.
+	 * @param	integer		$pageId Page ID
 	 * @return	array		Page Cache records
 	 */
-	function getCacheInformation($pageId, $page_sizes) {
-		$cachedPages = array();
-		$pageId = intval($pageId);
-
-		if (!$this->useCachingFramework) {
-			$fieldList = 'id,hash,page_id,reg1,tstamp,expires,cache_data,temp_content';
-
-			if ($page_sizes) {
-				$fieldList .= ',HTML';
-			}
-
-			$cachedPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-				$fieldList,
-				'cache_pages',
-				'page_id=' . $pageId,
-				'',
-				'reg1'
-			);
-		} else {
-			$cachedPages = $this->getPageCache()->getByTag('pageId_' . $pageId);
-		}
-
+	function getCacheInformation($pageId) {
+		$cachedPages = $this->getPageCache()->getByTag('pageId_' . $pageId);
 		return $cachedPages;
 	}
 
 	/**
 	 * Sorting cache info rows:
 	 *
-	 * @param	array		Ordering the cache info table so it becomes easier to get an overview of.
+	 * @param	array		$cacheInfo Ordering the cache info table so it becomes easier to get an overview of.
 	 * @return	array		Re-ordered array
 	 */
 	function sortCacheInfo($cacheInfo)	{
@@ -389,8 +330,8 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 				str_pad($hash_base['MP'],10,' ',STR_PAD_LEFT).'_'.
 				str_pad($hash_base['gr_list'],10,' ',STR_PAD_LEFT).'_'.
 				str_pad((is_array($cacheMetaData) ? htmlspecialchars($cacheMetaData['config']['sys_language_uid']) : ''),3,'0',STR_PAD_LEFT).'_'.
-				(is_array($hash_base['cHash']) && count($hash_base['cHash']) ? htmlspecialchars(t3lib_div::fixed_lgd_cs(t3lib_div::implodeArrayForUrl('',$hash_base['cHash']),200)) : '').'_'.
-				t3lib_div::shortMd5(serialize($hash_base['all']))
+				(is_array($hash_base['cHash']) && count($hash_base['cHash']) ? htmlspecialchars(GeneralUtility::fixed_lgd_cs(GeneralUtility::implodeArrayForUrl('',$hash_base['cHash']),200)) : '').'_'.
+				GeneralUtility::shortMd5(serialize($hash_base['all']))
 				] = $c;
 		}
 
@@ -407,50 +348,29 @@ class tx_cachemgm_modfunc1 extends t3lib_extobjbase {
 	/**
 	 * Fetch caching information for page.
 	 *
-	 * @param	integer		Page Cache identifier
+	 * @param	integer		$identifier Page Cache identifier
 	 * @return	array		Page Cache record
 	 */
 	function getCacheInformation_entry($identifier) {
-		$cacheInformation = array();
-
-		if (!$this->useCachingFramework) {
-			$identifier = intval($identifier);
-			$cachedPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'cache_pages', 'hash=' . $identifier);
-			if (is_array($cachedPages) && count($cachedPages)) {
-				$cacheInformation = $cachedPages[0];
-			}
-		} else {
-			$cachedPage = $this->getPageCache()->get($identifier);
-			if ($cachedPage !== FALSE) {
-				$cacheInformation = $cachedPage;
-			}
+		$cachedPage = $this->getPageCache()->get($identifier);
+		if ($cachedPage !== FALSE) {
+			return $cachedPage;
 		}
-
-		return $cacheInformation;
+		return array();
 	}
 
 	/**
 	 * Gets the pages cache object (if caching framework is enabled).
 	 *
-	 * @return t3lib_cache_frontend_AbstractFrontend
+	 * @return AbstractFrontend
 	 */
 	protected function getPageCache() {
-		if (!$this->useCachingFramework) {
-			throw new RuntimeException('Caching framework is not enabled.');
-		}
-
 		if (!isset($this->pageCache)) {
-		    $typo3CacheManager = t3lib_div::makeInstance('t3lib_cache_Manager');
+		    $typo3CacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
 			$this->pageCache = $typo3CacheManager->getCache('cache_pages');
 		}
-
 		return $this->pageCache;
 	}
 }
 
-
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cachemgm/modfunc1/class.tx_cachemgm_modfunc1.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/cachemgm/modfunc1/class.tx_cachemgm_modfunc1.php']);
-}
 ?>

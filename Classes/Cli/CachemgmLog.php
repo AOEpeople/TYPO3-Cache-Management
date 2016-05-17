@@ -1,12 +1,13 @@
 <?php
 
+use TYPO3\CMS\Core\Controller\CommandLineController;
 
 /**
  * CLI Controller for displaying and listenig to cache logs
  * 
  * @author danielpotzinger
  */
-class Tx_Cachemgm_Cli_CachemgmLog extends t3lib_cli {
+class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 	
 	public $stat;
 	

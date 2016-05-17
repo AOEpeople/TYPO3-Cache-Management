@@ -24,38 +24,10 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
-/**
- * Module: Cache management, global module in Tools >
- *
- * @author	Kasper Sk�rh�j <kasperYYYY@typo3.com>
- */
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- *
- *
- *   72: class tx_cachemgm_mod
- *   85:     function init()
- *   98:     function jumpToUrl(URL)
- *  110:     function menuConfig()
- *  132:     function main()
- *  162:     function printContent()
- *  172:     function cache_stat()
- *  195:     function db_bm()
- *  315:     function file_bm()
- *
- *              SECTION: OTHER FUNCTIONS:
- *  387:     function getAllFoldersInPath($fileArr,$path,$recursivityLevels=99,$excludePattern='')
- *  408:     function getFolderInfo($subpath,$recursivity=99)
- *  444:     function addFileAccessInfo(&$info,$testAccess=10)
- *  495:     function addFileWriteFiles(&$info,$files=3,$contentlength=100000)
- *  567:     function debugRows($rows,$header='',$returnHTML=FALSE,$noHSC=FALSE)
- *
- * TOTAL FUNCTIONS: 13
- * (This index is automatically created/updated by the extension "extdeveval")
- *
- */
 
+use TYPO3\CMS\Backend\Template\DocumentTemplate;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
@@ -73,6 +45,9 @@ class tx_cachemgm_mod {
 	var $MCONF=array();
 	var $MOD_MENU=array();
 	var $MOD_SETTINGS=array();
+	/**
+	 * @var DocumentTemplate
+	 */
 	var $doc;
 
 	var $content;
@@ -88,7 +63,7 @@ class tx_cachemgm_mod {
 
 		$this->menuConfig();
 
-		$this->doc = GeneralUtility::makeInstance("noDoc");
+		$this->doc = GeneralUtility::makeInstance("TYPO3\\CMS\\Backend\\Template\\DocumentTemplate");
 		$this->doc->form='<form action="" method="post">';
 		$this->doc->backPath = $BACK_PATH;
 		$this->doc->styleSheetFile2 = '../typo3conf/ext/cachemgm/mod/styles.css';
@@ -124,7 +99,7 @@ class tx_cachemgm_mod {
 			)
 		);
 			// CLEANSE SETTINGS
-		$this->MOD_SETTINGS = t3lib_BEfunc::getModuleData($this->MOD_MENU, GeneralUtility::_GP("SET"), $this->MCONF["name"], "ses");
+		$this->MOD_SETTINGS = BackendUtility::getModuleData($this->MOD_MENU, GeneralUtility::_GP("SET"), $this->MCONF["name"], "ses");
 	}
 
 	/**
@@ -138,7 +113,7 @@ class tx_cachemgm_mod {
 		$this->content="";
 		$this->content.=$this->doc->startPage("Cache Management Tools, Analysis and Benchmarking");
 
-		$menu=t3lib_BEfunc::getFuncMenu(0,"SET[function]",$this->MOD_SETTINGS["function"],$this->MOD_MENU["function"]);
+		$menu=BackendUtility::getFuncMenu(0,"SET[function]",$this->MOD_SETTINGS["function"],$this->MOD_MENU["function"]);
 
 		$this->content.=$this->doc->header("Cache Management Tools, Analysis and Benchmarking");
 		$this->content.=$this->doc->spacer(5);
@@ -238,7 +213,7 @@ class tx_cachemgm_mod {
 					The test works best when the number of records in a table row is higher than the number of records read. Especially if you perform the test multiple times you will get increasingly "better performance" in the first pass because of caching.
 					Ideally your test should start out with a rebooted and non-busy website to make sure no file/db caches are full. Well, you figure...<br>
 					In the sample below you can see that 100 records are tested on for the PRIMARY key. It takes 42 ms meaning each record took 0.4 ms to read. When using another index for the table only 31 records was selected. It took 14ms and divided by 31 it ends at 0.5 ms per record.<br>
-					<img src="'.t3lib_extMgm::extRelPath('cachemgm').'mod/db_read.png" hspace="5" vspace="5" alt="" />
+					<img src="'.ExtensionManagementUtility::extRelPath('cachemgm').'mod/db_read.png" hspace="5" vspace="5" alt="" />
 					<p/>';
 		$output.='<input type="text" name="_test_db_access_number" value="'.htmlspecialchars($TEST_db_access_number).'" /> number of records to read.<br/>';
 		$output.='<input type="submit" name="_test_db_access_ALL" value="Test ALL tables" onclick="return confirm(\'You sure?\');"/>';
@@ -361,14 +336,14 @@ class tx_cachemgm_mod {
 		$output.='<h3>File Access<h3/>';
 		$output.='<p>For each directory listed below this test will pick a number of random files and read the full contents of them while measuring the time it takes. This can give you a hint if file access is slow on your system.<br/>
 					The output shows the files read, their size and three columns 0,1,2 which shows the read time for three consecutive read operations. Usually column 0 will contain a higher number than column 1 and 2 which should be the same since the first read (column 0 time) will indicate the performance without the file system cache and read 2 and 3 (Columns 1+2) will indicate the delivery when the file system has cached the file. Also, an average is calculated.<br/>
-					<img src="'.t3lib_extMgm::extRelPath('cachemgm').'mod/file_access.png" hspace="5" vspace="5" alt="" /><p/>';
+					<img src="'.ExtensionManagementUtility::extRelPath('cachemgm').'mod/file_access.png" hspace="5" vspace="5" alt="" /><p/>';
 		$output.='<input type="text" name="_test_file_access_number" value="'.htmlspecialchars($TEST_file_access_number).'" /> number of files picked.<br/>';
 		$output.='<input type="submit" name="_test_file_access" value="Test File Access Times" />';
 
 		$output.='<br/><br/>';
 		$output.='<h3>File Write<h3/>';
 		$output.='<p>Will write 3 temporary files of 100kb to each directory below, measure the time it takes to write, read and delete the files. The output will display that in milliseconds in a table like the one shown here:<br/>
-					<img src="'.t3lib_extMgm::extRelPath('cachemgm').'mod/file_write.png" hspace="5" vspace="5" alt="" /><p/>';
+					<img src="'.ExtensionManagementUtility::extRelPath('cachemgm').'mod/file_write.png" hspace="5" vspace="5" alt="" /><p/>';
 		$output.='<input type="submit" name="_test_file_write" value="Test File Write Times" />';
 
 		$output.='<br/><br/><br/>';
@@ -641,20 +616,6 @@ class tx_cachemgm_mod {
 		}
 	}
 }
-
-// Include extension?
-if (defined("TYPO3_MODE") && $TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/cachemgm/mod/index.php"])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]["XCLASS"]["ext/cachemgm/mod/index.php"]);
-}
-
-
-
-
-
-
-
-
-
 
 
 

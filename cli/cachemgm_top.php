@@ -6,7 +6,7 @@ declare(ticks = 1);
  pcntl_signal(SIGTERM, "signal_handler");
  pcntl_signal(SIGINT, "signal_handler");
 
- $cliObj = t3lib_div::makeInstance('Tx_Cachemgm_Cli_CachemgmTop');
+ $cliObj = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Cachemgm_Cli_CachemgmTop');
  
  
  function signal_handler($signal) {

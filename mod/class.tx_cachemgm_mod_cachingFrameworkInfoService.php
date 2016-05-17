@@ -22,14 +22,19 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Backend\FileBackend;
+use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
+
 class tx_cachemgm_mod_cachingFrameworkInfoService {
 	/**
-	 * @var t3lib_cache_Manager
+	 * @var CacheManager
 	 */
 	private $cacheManager;
 	
 	public function __construct() {
-		$this->cacheManager = t3lib_div::makeInstance('t3lib_cache_Manager');
+		$this->cacheManager = t3lib_div::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
 	}
 
     /**
@@ -46,7 +51,7 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 	public function printOverviewForCache($cacheId) {
 		$cache = $this->cacheManager->getCache($cacheId);
 		$backend = $cache->getBackend();
-        $overviewURL = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl(
+        $overviewURL = BackendUtility::getModuleUrl(
             'tools_txcachemgmM1',
             array(
                 'cachingFrameWorkSubAction' => 'overview'
@@ -68,14 +73,14 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 				$content .= '<li>*Backend property "'.$properties[$key]->getName().'":'.$value;
 		}
 		
-		if ($backend instanceof t3lib_cache_backend_FileBackend) {
+		if ($backend instanceof FileBackend) {
 			$content .= '<li>Cache Folder:'.$backend->getCacheDirectory();
 			if (!is_writeable($backend->getCacheDirectory())) {
 				$content .='<strong class="error">Not writeable</strong>';
 			}
 		}
 		
-		if ($backend instanceof t3lib_cache_backend_DbBackend) {
+		if ($backend instanceof Typo3DatabaseBackend) {
 			$content .= '<li>Cache Table:'.$backend->getCacheTable();
 			$content .= '<li>Cache Entry Count:'.$this->countRowsInTable($backend->getCacheTable());
 			
@@ -102,7 +107,7 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 				$options = str_replace('array','',var_export($conf['options'],true));
 			}
 
-            $detailsURL = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl(
+            $detailsURL = BackendUtility::getModuleUrl(
                 'tools_txcachemgmM1',
                 array(
                     'cachingFrameWorkSubAction' => 'details',
@@ -110,7 +115,7 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
                 )
             );
 
-            $flushURL = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl(
+            $flushURL = BackendUtility::getModuleUrl(
                 'tools_txcachemgmM1',
                 array(
                     'cachingFrameWorkSubAction' => 'flush',
@@ -157,7 +162,7 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 		if (empty($frontend)) {
 			return 'Default (Variable)';
 		}
-		return str_replace('t3lib_cache_frontend_','',$frontend);
+		return $frontend;
 	}
 	
 	protected function getCacheBackendType($cacheId) {
@@ -166,6 +171,6 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 		if (empty($backend)) {
 			return 'Default (DbBackend)';
 		}
-		return str_replace('t3lib_cache_backend_','',$backend);
+		return $backend;
 	}
 }

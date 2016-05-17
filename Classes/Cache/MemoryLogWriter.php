@@ -22,6 +22,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * A memory log used to log and retrieve cache statistics
  *
@@ -30,7 +33,7 @@
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_MemoryLogWriter implements t3lib_Singleton {
+class Tx_Cachemgm_Cache_MemoryLogWriter implements SingletonInterface {
 	
 	const ACTION_SETSTART = 'SET_START';
 	const ACTION_SETEND = 'SET_END';
@@ -86,7 +89,7 @@ class Tx_Cachemgm_Cache_MemoryLogWriter implements t3lib_Singleton {
 		}	
 		$this->enabled = TRUE;
 		$this->processId = getmypid();
-		$this->log('-',t3lib_div::getIndpEnv('TYPO3_REQUEST_URL'),self::ACTION_LOGINIT);
+		$this->log('-',GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'),self::ACTION_LOGINIT);
 	}
 	
 	public function isEnabled() {

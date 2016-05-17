@@ -2,10 +2,10 @@
 if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
 if (TYPO3_MODE=='BE')	{
-	t3lib_extMgm::addModule('tools','txcachemgmM1','',t3lib_extMgm::extPath($_EXTKEY).'mod/');
+	TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('tools','txcachemgmM1','',TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY).'mod/');
 
 		// Add Web>Info module (cache_pages et al.)
-	t3lib_extMgm::insertModuleFunction(
+	TYPO3\CMS\Core\Utility\ExtensionManagementUtility::insertModuleFunction(
 		'web_info',
 		'tx_cachemgm_modfunc1',
 		null,

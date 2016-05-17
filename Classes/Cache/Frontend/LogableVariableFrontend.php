@@ -22,6 +22,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * A cache frontend for any kinds of PHP variables that writes into cache log
  *
@@ -30,7 +33,7 @@
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends t3lib_cache_frontend_VariableFrontend {
+class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFrontend {
 	
 	/**
 	 * @var Tx_Cachemgm_Cache_MemoryLogWriter
@@ -44,7 +47,7 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends t3lib_cache_fro
 	 */
 	public function initializeObject() {
 		parent::initializeObject();
-		$this->cacheLog = t3lib_div::makeInstance('Tx_Cachemgm_Cache_MemoryLogWriter');
+		$this->cacheLog = GeneralUtility::makeInstance('Tx_Cachemgm_Cache_MemoryLogWriter');
 	}
 
 	/**
