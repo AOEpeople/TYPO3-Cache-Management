@@ -7,12 +7,12 @@
 
 	* Fixed bug: Cache Management does not work if caching framework is not enabled
 
-2009-04-29  Michael Klapper  <michael.klapper@aoemedia.de>
+2009-04-29  Michael Klapper  <michael.klapper@aoe.com>
 
 	* Fix Bug #3193: Cache Management does not work with caching framework introduced in TYPO3 4.3
 	* Increase version to 2.0.0
 	* Add dependency to TYPO3 4.3
 
-2009-04-23  Michael Klapper  <michael.klapper@aoemedia.de>
+2009-04-23  Michael Klapper  <michael.klapper@aoe.com>
 
 	* Initial upload

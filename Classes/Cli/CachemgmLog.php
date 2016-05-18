@@ -32,7 +32,7 @@ class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 		$this->cli_help['synopsis'] = '###OPTIONS###';
 		$this->cli_help['description'] = "";
 		$this->cli_help['examples'] = "nice 10 /.../cli_dispatch.phpsh cachemgm_log --cache=extbase_object \nWill trigger the listener\n";
-		$this->cli_help['author'] = 'Daniel Poetzinger - AOE media 2012';
+		$this->cli_help['author'] = 'Daniel Poetzinger - AOE GmbH';
 		
 		$this->stat = new Tx_Cachemgm_Cli_CacheStatistic();
 	}
