@@ -58,7 +58,7 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws \InvalidArgumentException If $entryIdentifier or $tags is invalid
-	 * @throws t3lib_cache_exception_InvalidData If $sourceCode is not a string
+	 * @throws \TYPO3\CMS\Core\Cache\Exception\InvalidDataException If $sourceCode is not a string
 	 * @api
 	 */
 	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {

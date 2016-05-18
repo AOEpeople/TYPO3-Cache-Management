@@ -8,7 +8,7 @@ Backend Module:
 		- Limitation to number of pages selected at once (run-away brake) for a single page.
 	- View entry:
 		- Support in frontend for viewing the entry (may require that the page cache table is enriched with recording of incoming URL! - but even then we have to submit the hash-string because it can depend on other factors as well)
-			- A hook in tslib_fe can easily be used to look up a cache entry based on a hash string and just display the page (with no dynamic inserted content eg.)
+			- A hook in \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController can easily be used to look up a cache entry based on a hash string and just display the page (with no dynamic inserted content eg.)
 	- Comparison:
 		- Compare two entries to see what the difference are in terms of parameters used to generate the hash
 		- Compare page content.
@@ -25,7 +25,7 @@ Backend Module:
 
 API:
 - cache_pages -> API for adding reg1/reg2 [varchar? - JH] custom content!
-- automatic clear-pages cache protection / API? (global flag / t3lib_div-function?)
+- automatic clear-pages cache protection / API? (global flag / \TYPO3\CMS\Core\Utility\GeneralUtility-function?)
 	- "clear-cache" might not DELETE records but rather mark them "update-cache" or something like that... (would require the URL to be around...)
 	- protect-flag which will disable the *automatic* clearing of page cache for a single page (in page header; expiry set to never -> setting flag in "cache_pages" table and records with that flag set cannot be flushed!)
 - ""key1" and "key2" for granularity in caching!

@@ -26,6 +26,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class tx_cachemgm_mod_cachingFrameworkInfoService {
 	/**
@@ -34,7 +35,7 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 	private $cacheManager;
 	
 	public function __construct() {
-		$this->cacheManager = t3lib_div::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
+		$this->cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
 	}
 
     /**
@@ -45,9 +46,11 @@ class tx_cachemgm_mod_cachingFrameworkInfoService {
 		$cache->flush();
 	}
 
-    /**
-     * @param string $cacheId
-     */
+	/**
+	 * @param string $cacheId
+	 * @return string
+	 * @throws \TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException
+	 */
 	public function printOverviewForCache($cacheId) {
 		$cache = $this->cacheManager->getCache($cacheId);
 		$backend = $cache->getBackend();
