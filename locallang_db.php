@@ -10,4 +10,3 @@ $LOCAL_LANG = Array (
 		"moduleFunction.tx_cachemgm_modfunc1" => "Cache Management",	
 	),
 );
-?>

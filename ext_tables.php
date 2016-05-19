@@ -12,4 +12,3 @@ if (TYPO3_MODE=='BE')	{
 		'LLL:EXT:cachemgm/locallang_db.php:moduleFunction.tx_cachemgm_modfunc1'
 	);
 }
-?>

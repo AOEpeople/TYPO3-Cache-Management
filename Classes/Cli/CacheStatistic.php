@@ -124,6 +124,3 @@ class Tx_Cachemgm_Cli_CacheStatistic {
 	}
 	
 }
-
-
-?>

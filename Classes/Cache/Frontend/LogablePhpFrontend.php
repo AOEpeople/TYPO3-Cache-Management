@@ -122,4 +122,3 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 		return $result;
 	}
 }
-?>

@@ -79,6 +79,3 @@ class Tx_Cachemgm_Cli_CachemgmTop extends Tx_Cachemgm_Cli_CachemgmLog {
 	}
 
 }
-
-
-?>

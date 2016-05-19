@@ -109,4 +109,3 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 		return $result;
 	}
 }
-?>

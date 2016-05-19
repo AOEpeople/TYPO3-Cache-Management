@@ -24,6 +24,3 @@ if (isset($cliObj->cli_args['-h']) || isset($cliObj->cli_args['--help']))	{
 }
 
 $cliObj->showLogAction();
-
-
-?>

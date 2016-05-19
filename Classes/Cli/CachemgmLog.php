@@ -120,6 +120,3 @@ class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 				 round($log['time']*1000).'ms'.PHP_EOL;
 	}
 }
-
-
-?>

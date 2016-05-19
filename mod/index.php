@@ -624,4 +624,3 @@ $SOBE = GeneralUtility::makeInstance("tx_cachemgm_mod");
 $SOBE->init();
 $SOBE->main();
 $SOBE->printContent();
-?>

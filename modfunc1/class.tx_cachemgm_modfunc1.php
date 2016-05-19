@@ -372,5 +372,3 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 		return $this->pageCache;
 	}
 }
-
-?>

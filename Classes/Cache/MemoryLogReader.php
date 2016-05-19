@@ -92,4 +92,3 @@ class Tx_Cachemgm_Cache_MemoryLogReader extends Tx_Cachemgm_Cache_MemoryLogWrite
 
 	
 }
-?>

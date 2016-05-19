@@ -154,4 +154,3 @@ class Tx_Cachemgm_Cache_MemoryLogWriter implements SingletonInterface {
 
 	
 }
-?>
