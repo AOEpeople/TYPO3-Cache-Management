@@ -64,9 +64,8 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 */
 	public function set($entryIdentifier, $variable, array $tags = array(), $lifetime = NULL) {
 		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETSTART);
-		$result = parent::set($entryIdentifier, $variable,  $tags , $lifetime );
+		parent::set($entryIdentifier, $variable,  $tags , $lifetime );
 		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND, $startTime);
-		return $result;
 	}
 
 	/**
@@ -79,7 +78,7 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 */
 	public function get($entryIdentifier) {
 		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_GETSTART);
-		$result = parent::get($entryIdentifier, $variable,  $tags , $lifetime );
+		$result = parent::get($entryIdentifier);
 		if ($result !== false) {
 			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT, $startTime);
 		}
@@ -99,7 +98,7 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 */
 	public function has($entryIdentifier) {
 		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASSTART);
-		$result = parent::get($entryIdentifier, $variable,  $tags , $lifetime );
+		$result = parent::get($entryIdentifier);
 		if ($result !== false) {
 			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASHIT, $startTime);
 		}
