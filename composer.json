@@ -34,5 +34,11 @@
         "TYPO3",
         "extbase",
         "cachemgm"
-    ]
+    ],
+    "autoload": {
+        "psr-0": {
+            "Tx_Cachemgm_": "Classes/",
+            "tx_cachemgm_": ""
+        }
+    }
 }

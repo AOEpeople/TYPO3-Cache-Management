@@ -28,6 +28,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
 /**
  * Cache management extension
@@ -53,10 +54,10 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 
 		return array (
 			'depth' => array(
-				0 => $LANG->sL('LLL:EXT:lang/locallang_core.php:labels.depth_0'),
-				1 => $LANG->sL('LLL:EXT:lang/locallang_core.php:labels.depth_1'),
-				2 => $LANG->sL('LLL:EXT:lang/locallang_core.php:labels.depth_2'),
-				3 => $LANG->sL('LLL:EXT:lang/locallang_core.php:labels.depth_3'),
+                0 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_0'),
+                1 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_1'),
+                2 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_2'),
+                3 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_3')
 			)
 		);
 	}
@@ -90,7 +91,14 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 			$tree->init('AND '.$GLOBALS['BE_USER']->getPagePermsClause(1));
 
 				// Creating top icon; the current page
-			$HTML = IconUtility::getIconImage('pages', $treeStartingRecord, $GLOBALS['BACK_PATH'],'align="top"');
+            if (VersionNumberUtility::convertVersionNumberToInteger(VersionNumberUtility::getNumericTypo3Version()) >= 7000000) {
+                /** @var \TYPO3\CMS\Core\Imaging\IconFactory $iconFactory */
+                $iconFactory = GeneralUtility::makeInstance('TYPO3\CMS\Core\Imaging\IconFactory');
+                $HTML = $iconFactory->getIconForRecord('pages', $this->pObj->pageinfo, \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render();
+            } else {
+                $HTML = IconUtility::getIconImage('pages', $treeStartingRecord, $GLOBALS['BACK_PATH'],'align="top"');
+            }
+
 			$tree->tree[] = array(
 				'row' => $treeStartingRecord,
 				'HTML' => $HTML
@@ -211,7 +219,8 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 					$id = '';
 					$hash = $inf['identifier'];
 
-					$tCells[]='<td>'.($id?(htmlspecialchars($id).' - '):'').'<a href="index.php?id='.$this->pObj->id.'&showID='.htmlspecialchars($hash).'"><u>Details</u></a></td>';
+                    $cacheDetailUrl = BackendUtility::getModuleUrl(GeneralUtility::_GET('M'), array('id' => $this->pObj->id, 'showID' => htmlspecialchars($hash)));
+					$tCells[]='<td>'.($id?(htmlspecialchars($id).' - '):'').'<a href="' . $cacheDetailUrl . '"><u>' . $GLOBALS['LANG']->sL('LLL:EXT:cachemgm/locallang.xlf:details', true) . '</u></a></td>';
 					$tCells[]='<td>'.htmlspecialchars($hash).'</td>';
 
 						// Compile Row:
@@ -294,7 +303,8 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 		$theOutput.= '<h3>"cache_data" field content:</h3>';
 		$theOutput.= '<pre>'.htmlspecialchars($cache_data_formatted).'</pre>';
 
-		$theOutput.= '<a href="index.php?id='.$this->pObj->id.'">Back</a>';
+        $cacheListViewUrl = BackendUtility::getModuleUrl(GeneralUtility::_GET('M'), array('id' => $this->pObj->id));
+		$theOutput.= '<a href="' . $cacheListViewUrl . '">' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xlf:back', true) . '</a>';
 
 		return $theOutput;
 	}

@@ -9,6 +9,6 @@ if (TYPO3_MODE=='BE')	{
 		'web_info',
 		'tx_cachemgm_modfunc1',
 		null,
-		'LLL:EXT:cachemgm/locallang_db.php:moduleFunction.tx_cachemgm_modfunc1'
+		'LLL:EXT:cachemgm/locallang.xlf:moduleFunction.tx_cachemgm_modfunc1'
 	);
 }
