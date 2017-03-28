@@ -2,7 +2,7 @@
     "name": "typo3-ter/cachemgm",
     "description": "Provides management of the page caching for high traffic websites",
     "type": "typo3-cms-extension",
-    "version": "2.5.0",
+    "version": "2.5.1",
     "homepage": "https://forge.typo3.org/projects/extension-cachemgm",
     "license": "GPL-3.0",
     "support": {
