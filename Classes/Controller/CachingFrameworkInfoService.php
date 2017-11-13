@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2012 Daniel Pötzinger
+*  (c) 2012-2017 Daniel Pötzinger
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class tx_cachemgm_mod_cachingFrameworkInfoService {
+class Tx_Cachemgm_Controller_CachingFrameworkInfoService {
 	/**
 	 * @var CacheManager
 	 */

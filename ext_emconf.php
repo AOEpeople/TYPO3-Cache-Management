@@ -29,15 +29,13 @@ $EM_CONF[$_EXTKEY] = array(
     'clearCacheOnLoad' => 0,
     'lockType' => '',
     'author_company' => '',
-    'version' => '2.6.0',
+    'version' => '3.0.0',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '6.2.0-7.6.99',
+            'typo3' => '7.6.0-0.0.0',
         ),
-        'conflicts' => array(
-        ),
-        'suggests' => array(
-        ),
+        'conflicts' => array(),
+        'suggests' => array(),
     ),
     '_md5_values_when_last_written' => '',
 );
