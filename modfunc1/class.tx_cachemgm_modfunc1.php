@@ -25,7 +25,6 @@
 use TYPO3\CMS\Backend\Module\AbstractFunctionModule;
 use TYPO3\CMS\Backend\Tree\View\PageTreeView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
@@ -90,14 +89,10 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 			$tree = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Tree\\View\\PageTreeView');
 			$tree->init('AND '.$GLOBALS['BE_USER']->getPagePermsClause(1));
 
-				// Creating top icon; the current page
-            if (VersionNumberUtility::convertVersionNumberToInteger(VersionNumberUtility::getNumericTypo3Version()) >= 7000000) {
-                /** @var \TYPO3\CMS\Core\Imaging\IconFactory $iconFactory */
-                $iconFactory = GeneralUtility::makeInstance('TYPO3\CMS\Core\Imaging\IconFactory');
-                $HTML = $iconFactory->getIconForRecord('pages', $this->pObj->pageinfo, \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render();
-            } else {
-                $HTML = IconUtility::getIconImage('pages', $treeStartingRecord, $GLOBALS['BACK_PATH'],'align="top"');
-            }
+			// Creating top icon; the current page
+			/** @var \TYPO3\CMS\Core\Imaging\IconFactory $iconFactory */
+			$iconFactory = GeneralUtility::makeInstance('TYPO3\CMS\Core\Imaging\IconFactory');
+			$HTML = $iconFactory->getIconForRecord('pages', $this->pObj->pageinfo, \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render();
 
 			$tree->tree[] = array(
 				'row' => $treeStartingRecord,
