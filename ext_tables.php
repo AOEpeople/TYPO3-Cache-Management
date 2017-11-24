@@ -6,10 +6,10 @@ if (TYPO3_MODE=='BE')	{
 	$iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
 	$iconRegistry->registerIcon(
 		'module-cachemgm-backend-module',
-		\TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
+		\TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
 		[
 			//'name' => 'database'
-			'source' => 'EXT:cachemgm/Resources/Public/BackendModule/ModuleIcon.gif',
+			'source' => 'EXT:cachemgm/ext_icon.svg',
 		]
 	);
 
