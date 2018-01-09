@@ -1,5 +1,8 @@
 <?php
+namespace Aoe\Cachemgm\Cli;
 
+use Aoe\Cachemgm\Cache\MemoryLogReader;
+use Aoe\Cachemgm\Cache\MemoryLogWriter;
 use TYPO3\CMS\Core\Controller\CommandLineController;
 
 /**
@@ -7,7 +10,7 @@ use TYPO3\CMS\Core\Controller\CommandLineController;
  * 
  * @author danielpotzinger
  */
-class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
+class CachemgmLog extends CommandLineController {
 	
 	public $stat;
 	
@@ -16,7 +19,7 @@ class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 	 *
 	 * @return	void
 	 */
-	function __construct()	{
+	public function __construct()	{
 
 		parent::__construct();
 
@@ -34,7 +37,7 @@ class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 		$this->cli_help['examples'] = "nice 10 /.../cli_dispatch.phpsh cachemgm_log --cache=extbase_object \nWill trigger the listener\n";
 		$this->cli_help['author'] = 'Daniel Poetzinger - AOE GmbH';
 		
-		$this->stat = new Tx_Cachemgm_Cli_CacheStatistic();
+		$this->stat = new CacheStatistic();
 	}
 	
 	/**
@@ -68,7 +71,7 @@ class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 	 * @param string $callback
 	 */
 	protected function startListenToLogs($callback='logListener') {
-		$reader = new Tx_Cachemgm_Cache_MemoryLogReader();
+		$reader = new MemoryLogReader();
 		if (!$reader->isEnabled()) {	
 			die('Tx_Cachemgm_Cache_MemoryLogReader not enabled! Check shm PHP functions. (Or the shared memory is not yet created?)'.PHP_EOL);
 		}
@@ -94,7 +97,7 @@ class Tx_Cachemgm_Cli_CachemgmLog extends CommandLineController {
 			$log = $reader->getNextLog($nr, $filterCache, $filterAction);
 			$nr = $log['nr'];			
 			if (!empty($filterUrl)) {
-				if ($log['action'] == Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_LOGINIT && $log['id'] == $filterUrl) {
+				if ($log['action'] == MemoryLogWriter::ACTION_LOGINIT && $log['id'] == $filterUrl) {
 					$processesMatchingUrlFilter[$log['pid']] = TRUE;
 				}
 				if (!isset($processesMatchingUrlFilter[$log['pid']])) {

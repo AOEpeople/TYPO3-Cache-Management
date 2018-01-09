@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Cache\Frontend;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Aoe\Cachemgm\Cache\MemoryLogWriter;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,10 +36,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
+class LogablePhpFrontend extends PhpFrontend {
 	
 	/**
-	 * @var Tx_Cachemgm_Cache_MemoryLogWriter
+	 * @var MemoryLogWriter
 	 */
 	protected $cacheLog;
 
@@ -46,7 +49,7 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 	 * @return void
 	 */
 	public function initializeObject() {
-		$this->cacheLog = GeneralUtility::makeInstance('Tx_Cachemgm_Cache_MemoryLogWriter');
+		$this->cacheLog = GeneralUtility::makeInstance(MemoryLogWriter::class);
 	}
 
 	/**
@@ -62,9 +65,9 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 	 * @api
 	 */
 	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_SETSTART);
 		$result = parent::set($entryIdentifier, $variable,  $tags , $lifetime );
-		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND, $startTime);
+		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_SETEND, $startTime);
 		return $result;
 	}
 		
@@ -76,9 +79,9 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 	 * @api
 	 */
 	public function requireOnce($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_REQOSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_REQOSTART);
 		$result = parent::requireOnce($entryIdentifier);
-		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_REQOEND, $startTime);
+		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_REQOEND, $startTime);
 		return $result;
 	}
 	
@@ -91,13 +94,13 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_GETSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_GETSTART);
 		$result = parent::get($entryIdentifier, $variable,  $tags , $lifetime );
 		if ($result !== false) {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HIT, $startTime);
 		}
 		else {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_MISS, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_MISS, $startTime);
 		}		
 		return $result;
 	}
@@ -111,13 +114,13 @@ class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
 	 * @api
 	 */
 	public function has($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HASSTART);
 		$result = parent::get($entryIdentifier, $variable,  $tags , $lifetime );
 		if ($result !== false) {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASHIT, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HASHIT, $startTime);
 		}
 		else {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASMISS, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HASMISS, $startTime);
 		}		
 		return $result;
 	}

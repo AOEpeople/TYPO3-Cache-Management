@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Cache;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -33,7 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_MemoryLogWriter implements SingletonInterface {
+class MemoryLogWriter implements SingletonInterface {
 	
 	const ACTION_SETSTART = 'SET_START';
 	const ACTION_SETEND = 'SET_END';
@@ -48,13 +50,12 @@ class Tx_Cachemgm_Cache_MemoryLogWriter implements SingletonInterface {
 	
 	const ACTION_REQOSTART = 'REQO_START';
 	const ACTION_REQOEND = 'REQO_END';
-	
-	
-	
+
 	const ACTION_LOGINIT = 'INIT';
 	
 	protected $communicationMode = 'msg'; // one of msg = Unix Mesage / shmop = Unix Shared Memory Operation / shm -  Shared memory storage
-	/**
+
+    /**
 	 * incremental counter
 	 * @var integer
 	 */

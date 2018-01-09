@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Cache\Frontend;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Aoe\Cachemgm\Cache\MemoryLogWriter;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,10 +36,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFrontend {
+class LogableVariableFrontend extends VariableFrontend {
 	
 	/**
-	 * @var Tx_Cachemgm_Cache_MemoryLogWriter
+	 * @var MemoryLogWriter
 	 */
 	protected $cacheLog;
 
@@ -47,7 +50,7 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 */
 	public function initializeObject() {
 		parent::initializeObject();
-		$this->cacheLog = GeneralUtility::makeInstance('Tx_Cachemgm_Cache_MemoryLogWriter');
+		$this->cacheLog = GeneralUtility::makeInstance(MemoryLogWriter::class);
 	}
 
 	/**
@@ -63,9 +66,9 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 * @api
 	 */
 	public function set($entryIdentifier, $variable, array $tags = array(), $lifetime = NULL) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_SETSTART);
 		parent::set($entryIdentifier, $variable,  $tags , $lifetime );
-		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND, $startTime);
+		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_SETEND, $startTime);
 	}
 
 	/**
@@ -77,13 +80,13 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_GETSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_GETSTART);
 		$result = parent::get($entryIdentifier);
 		if ($result !== false) {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HIT, $startTime);
 		}
 		else {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_MISS, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_MISS, $startTime);
 		}		
 		return $result;
 	}
@@ -97,13 +100,13 @@ class Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend extends VariableFronten
 	 * @api
 	 */
 	public function has($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASSTART);
+		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HASSTART);
 		$result = parent::get($entryIdentifier);
 		if ($result !== false) {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASHIT, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HASHIT, $startTime);
 		}
 		else {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASMISS, $startTime);
+			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,MemoryLogWriter::ACTION_HASMISS, $startTime);
 		}		
 		return $result;
 	}

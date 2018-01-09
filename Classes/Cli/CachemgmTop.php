@@ -1,12 +1,12 @@
 <?php
-
+namespace Aoe\Cachemgm\Cli;
 
 /**
  * CLI Controller for displaying and listenig to cache logs
  * 
  * @author danielpotzinger
  */
-class Tx_Cachemgm_Cli_CachemgmTop extends Tx_Cachemgm_Cli_CachemgmLog {
+class CachemgmTop extends CachemgmLog {
 	
 	public $stat;
 	
@@ -15,7 +15,7 @@ class Tx_Cachemgm_Cli_CachemgmTop extends Tx_Cachemgm_Cli_CachemgmLog {
 	 *
 	 * @return	void
 	 */
-	function __construct()	{
+	public function __construct()	{
 
 		parent::__construct();
 
@@ -26,7 +26,7 @@ class Tx_Cachemgm_Cli_CachemgmTop extends Tx_Cachemgm_Cli_CachemgmLog {
 		$this->cli_help['examples'] = "nice 10 /.../cli_dispatch.phpsh cachemgm_top --cache=extbase_object \nWill trigger the listener\n";
 		$this->cli_help['author'] = 'Daniel Poetzinger - AOE GmbH';
 		
-		$this->stat = new Tx_Cachemgm_Cli_CacheStatistic();
+		$this->stat = new CacheStatistic();
 	}
 	
 	/**

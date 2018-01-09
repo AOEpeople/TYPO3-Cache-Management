@@ -1,12 +1,14 @@
 <?php
+namespace Aoe\Cachemgm\Cli;
 
+use Aoe\Cachemgm\Cache\MemoryLogWriter;
 
 /**
  * Simple Cache statistic collector and outputter :-)
  * 
  * @author danielpotzinger
  */
-class Tx_Cachemgm_Cli_CacheStatistic {
+class CacheStatistic {
 	private $counts = array();
 	private $timeSums = array();
 	private $idendifiers = array();
@@ -46,6 +48,7 @@ class Tx_Cachemgm_Cli_CacheStatistic {
 	/**
 	 * returns the top n identifiers
 	 * @param integer $n
+     * @return array
 	 */
 	public function getTopIdendifiers($n=100) {
 		arsort($this->idendifiers);
@@ -73,33 +76,33 @@ class Tx_Cachemgm_Cli_CacheStatistic {
 		foreach ($this->counts as $cache => $counts) {
 			echo PHP_EOL.'Cache "'.$cache.'":'.PHP_EOL.str_repeat('-',25).PHP_EOL;
 			echo ' get method:'.PHP_EOL;
-			echo '   Hits:'.$counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT].PHP_EOL;
-			echo '   Misses:'.$counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_MISS].PHP_EOL;
-			if ($counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_GETSTART] > 0) {
-				echo '   Hit-Rate:'.round( $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT] / $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_GETSTART],3).PHP_EOL;
+			echo '   Hits:'.$counts[MemoryLogWriter::ACTION_HIT].PHP_EOL;
+			echo '   Misses:'.$counts[MemoryLogWriter::ACTION_MISS].PHP_EOL;
+			if ($counts[MemoryLogWriter::ACTION_GETSTART] > 0) {
+				echo '   Hit-Rate:'.round( $counts[MemoryLogWriter::ACTION_HIT] / $counts[MemoryLogWriter::ACTION_GETSTART],3).PHP_EOL;
 			}
-			if ($counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT] > 0) {
-				$overallHitTime = $overallSetTime + $this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT];
-				$overallHitCount =  $overallSetCount + $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT];								
-				echo '   Average Hit time:'. $this->formatTime($this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT]  / $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT]  ).PHP_EOL;
+			if ($counts[MemoryLogWriter::ACTION_HIT] > 0) {
+				$overallHitTime = $overallSetTime + $this->timeSums[$cache][MemoryLogWriter::ACTION_HIT];
+				$overallHitCount =  $overallSetCount + $counts[MemoryLogWriter::ACTION_HIT];								
+				echo '   Average Hit time:'. $this->formatTime($this->timeSums[$cache][MemoryLogWriter::ACTION_HIT]  / $counts[MemoryLogWriter::ACTION_HIT]  ).PHP_EOL;
 			}			
-			echo '   Overall Hit Time:'.   $this->formatTime($this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT]).PHP_EOL;
+			echo '   Overall Hit Time:'.   $this->formatTime($this->timeSums[$cache][MemoryLogWriter::ACTION_HIT]).PHP_EOL;
 			//has method stats
 			echo ' has method:'.PHP_EOL;
-			echo '   Hits:'.$counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASHIT].PHP_EOL;
-			echo '   Misses:'.$counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASMISS].PHP_EOL;
-			echo '   Overall Time:'.   $this->formatTime($this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASHIT]+$this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASMISS]).PHP_EOL;
+			echo '   Hits:'.$counts[MemoryLogWriter::ACTION_HASHIT].PHP_EOL;
+			echo '   Misses:'.$counts[MemoryLogWriter::ACTION_HASMISS].PHP_EOL;
+			echo '   Overall Time:'.   $this->formatTime($this->timeSums[$cache][MemoryLogWriter::ACTION_HASHIT]+$this->timeSums[$cache][MemoryLogWriter::ACTION_HASMISS]).PHP_EOL;
 			//set method
 			echo ' set method:'.PHP_EOL;
-			echo '    Sucess Writes:'.$counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND].PHP_EOL;
-			echo '    Failed Writes:'. ( $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETSTART]-$counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND]) .PHP_EOL;
+			echo '    Sucess Writes:'.$counts[MemoryLogWriter::ACTION_SETEND].PHP_EOL;
+			echo '    Failed Writes:'. ( $counts[MemoryLogWriter::ACTION_SETSTART]-$counts[MemoryLogWriter::ACTION_SETEND]) .PHP_EOL;
 			
-			if ($counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND] > 0) {
-				$overallSetTime = $overallSetTime + $this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND];
-				$overallSetCount =  $overallSetCount + $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND];			
-				echo '    Average Write time:'. $this->formatTime( $this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND]  / $counts[Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND] ).PHP_EOL;
+			if ($counts[MemoryLogWriter::ACTION_SETEND] > 0) {
+				$overallSetTime = $overallSetTime + $this->timeSums[$cache][MemoryLogWriter::ACTION_SETEND];
+				$overallSetCount =  $overallSetCount + $counts[MemoryLogWriter::ACTION_SETEND];			
+				echo '    Average Write time:'. $this->formatTime( $this->timeSums[$cache][MemoryLogWriter::ACTION_SETEND]  / $counts[MemoryLogWriter::ACTION_SETEND] ).PHP_EOL;
 			}
-			echo '    Overall Write Time:'. $this->formatTime($this->timeSums[$cache][Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND]).PHP_EOL;
+			echo '    Overall Write Time:'. $this->formatTime($this->timeSums[$cache][MemoryLogWriter::ACTION_SETEND]).PHP_EOL;
 			
 			echo PHP_EOL;
 		}

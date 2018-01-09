@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Backend;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -25,9 +27,12 @@
 use TYPO3\CMS\Backend\Module\AbstractFunctionModule;
 use TYPO3\CMS\Backend\Tree\View\PageTreeView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 
 /**
  * Cache management extension
@@ -36,7 +41,7 @@ use TYPO3\CMS\Core\Utility\VersionNumberUtility;
  * @package TYPO3
  * @subpackage tx_cachemgm
  */
-class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
+class BackendModule extends AbstractFunctionModule {
 	/**
 	 * Frontend cache object to table cache_pages.
 	 * @var AbstractFrontend
@@ -46,19 +51,19 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	/**
 	 * Returns the menu array
 	 *
-	 * @return	array
+	 * @return array
 	 */
-	function modMenu()	{
+	public function modMenu()	{
 		global $LANG;
 
-		return array (
-			'depth' => array(
+		return [
+			'depth' => [
                 0 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_0'),
                 1 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_1'),
                 2 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_2'),
                 3 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_3')
-			)
-		);
+			]
+		];
 	}
 
 	/**
@@ -66,7 +71,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 *
 	 * @return	string		Output HTML for the module.
 	 */
-	function main()	{
+	public function main()	{
 		$showID = GeneralUtility::_GP('showID');
 
 		if ($showID)	{
@@ -86,12 +91,12 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 			$depth = $this->pObj->MOD_SETTINGS['depth'];
 
 				// Initialize tree object:
-			$tree = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Tree\\View\\PageTreeView');
+			$tree = GeneralUtility::makeInstance(PageTreeView::class);
 			$tree->init('AND '.$GLOBALS['BE_USER']->getPagePermsClause(1));
 
 			// Creating top icon; the current page
 			/** @var \TYPO3\CMS\Core\Imaging\IconFactory $iconFactory */
-			$iconFactory = GeneralUtility::makeInstance('TYPO3\CMS\Core\Imaging\IconFactory');
+			$iconFactory = GeneralUtility::makeInstance(IconFactory::class);
 			$HTML = $iconFactory->getIconForRecord('pages', $this->pObj->pageinfo, \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->render();
 
 			$tree->tree[] = array(
@@ -129,14 +134,14 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 * @param	boolean		$flushAll If set, page cache is flushed.
 	 * @return	string		HTML for the information table.
 	 */
-	function renderModule(PageTreeView $tree,$page_sizes=FALSE,$flushAll=FALSE)	{
+	private function renderModule(PageTreeView $tree,$page_sizes=FALSE,$flushAll=FALSE)	{
 			// Traverse tree:
 		$output = '';
 		$cc=0;
 		foreach($tree->tree as $row)	{
 			if ($flushAll)	{
 				/* @var $dataHandler TYPO3\CMS\Core\DataHandling\DataHandler */
-				$dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
+				$dataHandler = GeneralUtility::makeInstance(DataHandler::class);
 				$dataHandler->start($row['row'], 'delete');
 				$dataHandler->clear_cacheCmd(intval($row['row']['uid']));
 			}
@@ -274,7 +279,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 * @param	string		cache entry identifier.
 	 * @return	string		HTML
 	 */
-	function renderID($identifier) {
+	private function renderID($identifier) {
 		$cache_row = $this->getCacheInformation_entry($identifier);
 
 		$html = $cache_row['HTML'];
@@ -289,8 +294,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 		ob_end_clean();
 
 
-		$theOutput = '<h3>Cache record</h3><em>(except HTML and cache_data fields)</em>'.
-                        \TYPO3\CMS\Core\Utility\DebugUtility::viewArray($cache_row);
+		$theOutput = '<h3>Cache record</h3><em>(except HTML and cache_data fields)</em>'. DebugUtility::viewArray($cache_row);
 
 		$theOutput.= '<h3>"HTML" field content:</h3>';
 		$theOutput.= '<pre>'.htmlspecialchars($html).'</pre>';
@@ -310,7 +314,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 * @param	integer		$pageId Page ID
 	 * @return	array		Page Cache records
 	 */
-	function getCacheInformation($pageId) {
+	private function getCacheInformation($pageId) {
 		$cachedPages = $this->getPageCache()->getByTag('pageId_' . $pageId);
 		return $cachedPages;
 	}
@@ -321,7 +325,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 * @param	array		$cacheInfo Ordering the cache info table so it becomes easier to get an overview of.
 	 * @return	array		Re-ordered array
 	 */
-	function sortCacheInfo($cacheInfo)	{
+	private function sortCacheInfo($cacheInfo)	{
 		$sortCacheInfo = array();
 		foreach($cacheInfo as $c => $inf)	{
 
@@ -356,7 +360,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 * @param	integer		$identifier Page Cache identifier
 	 * @return	array		Page Cache record
 	 */
-	function getCacheInformation_entry($identifier) {
+	private function getCacheInformation_entry($identifier) {
 		$cachedPage = $this->getPageCache()->get($identifier);
 		if ($cachedPage !== FALSE) {
 			return $cachedPage;
@@ -371,7 +375,7 @@ class tx_cachemgm_modfunc1 extends AbstractFunctionModule {
 	 */
 	protected function getPageCache() {
 		if (!isset($this->pageCache)) {
-		    $typo3CacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
+		    $typo3CacheManager = GeneralUtility::makeInstance(CacheManager::class);
 			$this->pageCache = $typo3CacheManager->getCache('cache_pages');
 		}
 		return $this->pageCache;

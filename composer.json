@@ -2,12 +2,12 @@
     "name": "typo3-ter/cachemgm",
     "description": "Provides management of the page caching for high traffic websites",
     "type": "typo3-cms-extension",
-    "homepage": "https://forge.typo3.org/projects/extension-cachemgm",
+    "homepage": "https://github.com/AOEpeople/TYPO3-Cache-Management",
     "license": "GPL-3.0",
     "support": {
         "email": "dev@aoe.com",
-        "issues": "https://forge.typo3.org/projects/extension-cachemgm/issues",
-        "source": "https://forge.typo3.org/projects/extension-cachemgm"
+        "issues": "https://github.com/AOEpeople/TYPO3-Cache-Management/issues",
+        "source": "https://github.com/AOEpeople/TYPO3-Cache-Management"
     },
     "authors": [
         {
@@ -31,10 +31,8 @@
         "cachemgm"
     ],
     "autoload": {
-        "classmap": [
-            "Classes",
-            "modfunc1",
-            ""
-        ]
+        "psr-4": {
+            "Aoe\\Cachemgm\\": "Classes/"
+        }
     }
 }

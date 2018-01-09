@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Cache;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -30,7 +32,7 @@
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_MemoryLogReader extends Tx_Cachemgm_Cache_MemoryLogWriter {
+class MemoryLogReader extends MemoryLogWriter {
 	
 	/**
 	 * @var string

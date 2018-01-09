@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Controller;
+
 /***************************************************************
 *  Copyright notice
 *
@@ -22,20 +24,21 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+use ReflectionObject;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Tx_Cachemgm_Controller_CachingFrameworkInfoService {
+class CachingFrameworkInfoService {
 	/**
 	 * @var CacheManager
 	 */
 	private $cacheManager;
 	
 	public function __construct() {
-		$this->cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
+		$this->cacheManager = GeneralUtility::makeInstance(CacheManager::class);
 	}
 
     /**

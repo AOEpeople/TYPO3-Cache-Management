@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Controller;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Backend\Module\BaseScriptClass;
 
-class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
+class BackendModuleController extends BaseScriptClass {
     /**
      * @var string
      */
@@ -50,7 +52,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
         $this->MCONF['name'] = $this->moduleName;
         $this->getLanguageService()->includeLLFile('EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf');
 
-        $this->doc = GeneralUtility::makeInstance("TYPO3\\CMS\\Backend\\Template\\DocumentTemplate");
+        $this->doc = GeneralUtility::makeInstance(DocumentTemplate::class);
         $this->doc->form='<form action="" method="post">';
         $this->doc->backPath = $GLOBALS['BACK_PATH'];
         $this->doc->styleSheetFile2 = '../typo3conf/ext/cachemgm/Resources/Public/BackendModule/styles.css';
@@ -77,7 +79,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function menuConfig()	{
+    public function menuConfig()	{
 
         // MENU-ITEMS:
         // If array, then it's a selector box menu
@@ -100,7 +102,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function main()	{
+    public function main()	{
         $this->content="";
         $this->content.=$this->doc->startPage("Cache Management Tools, Analysis and Benchmarking");
 
@@ -131,7 +133,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function printContent()	{
+    public function printContent()	{
         $this->content .= $this->doc->endPage();
         echo $this->content;
     }
@@ -141,7 +143,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function cache_stat() {
+    public function cache_stat() {
         $output = '<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/><br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
 
         if (GeneralUtility::_POST('_test_cache_hash')) {
@@ -163,9 +165,9 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function cachingframework_stat()	{
-        /* @var $infoService Tx_Cachemgm_Controller_CachingFrameworkInfoService */
-        $infoService = GeneralUtility::makeInstance('Tx_Cachemgm_Controller_CachingFrameworkInfoService');
+    public function cachingframework_stat()	{
+        /* @var $infoService CachingFrameworkInfoService */
+        $infoService = GeneralUtility::makeInstance(CachingFrameworkInfoService::class);
         $subAction = GeneralUtility::_GP('cachingFrameWorkSubAction');
         $output='';
         switch ($subAction) {
@@ -192,7 +194,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function db_bm()	{
+    public function db_bm()	{
 
         $TEST_db_access_all = GeneralUtility::_POST('_test_db_access_ALL');
         $TEST_db_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_db_access_number'),1,2000,100);
@@ -316,7 +318,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      *
      * @return	void
      */
-    function file_bm()	{
+    public function file_bm()	{
 
         $TEST_file_access = GeneralUtility::_POST('_test_file_access');
         $TEST_file_write = GeneralUtility::_POST('_test_file_write');
@@ -388,7 +390,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      * @param	string		$excludePattern: regex pattern of files/directories to exclude
      * @return	array		An array with the found files/directories.
      */
-    function getAllFoldersInPath($fileArr,$path,$recursivityLevels=99,$excludePattern='')	{
+    private function getAllFoldersInPath($fileArr,$path,$recursivityLevels=99,$excludePattern='')	{
         $fileArr[] = $path;
 
         $dirs = GeneralUtility::get_dirs($path);
@@ -409,7 +411,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      * @param	integer		Recursivity into folders
      * @return	array		Info array.
      */
-    function getFolderInfo($subpath,$recursivity=99)	{
+    private function getFolderInfo($subpath,$recursivity=99)	{
         $path = PATH_site.$subpath;
         $file_bm = GeneralUtility::removePrefixPathFromList($this->getAllFoldersInPath(array(),$path,$recursivity),PATH_site);
         $info = array();
@@ -445,7 +447,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      * @param	integer		Number of random files to return
      * @return	void
      */
-    function addFileAccessInfo(&$info,$testAccess=10)	{
+    private function addFileAccessInfo(&$info,$testAccess=10)	{
 
         $postDir = GeneralUtility::_POST('_dir');
         foreach($info as $relPath => $infA)	{
@@ -496,7 +498,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      * @param	integer		Content length in bytes
      * @return	void
      */
-    function addFileWriteFiles(&$info,$files=3,$contentlength=100000)	{
+    private function addFileWriteFiles(&$info,$files=3,$contentlength=100000)	{
 
         $postDir = GeneralUtility::_POST('_dir');
         if ($files > 0 && $contentlength>0)	{
@@ -568,7 +570,7 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      * @param	boolean		If set, values are not htmlspecialchar()'ed. Thus allows HTML in.
      * @return	void		Outputs to browser.
      */
-    function debugRows($rows,$header='',$returnHTML=FALSE,$noHSC=FALSE)	{
+    private function debugRows($rows,$header='',$returnHTML=FALSE,$noHSC=FALSE)	{
         if (is_array($rows))	{
             reset($rows);
             $firstEl = current($rows);
