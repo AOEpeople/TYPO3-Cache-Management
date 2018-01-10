@@ -40,9 +40,9 @@ class TypoScriptFrontendHook
      * Hook for TypoScriptFrontendController which disables looking up a page in cache.
      * That is necessary if you want to make sure to re-cache (or re-index!) a page
      *
-     * @param    array $params Parameters from frontend
-     * @param    TypoScriptFrontendController $ref
-     * @return    void
+     * @param array $params Parameters from frontend
+     * @param TypoScriptFrontendController $ref
+     * @return void
      * @see TypoScriptFrontendController::headerNoCache()
      */
     public function fe_headerNoCache(&$params, TypoScriptFrontendController $ref)
