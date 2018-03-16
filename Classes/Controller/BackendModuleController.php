@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Controller;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +33,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Backend\Module\BaseScriptClass;
 
-class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
+class BackendModuleController extends BaseScriptClass
+{
     /**
      * @var string
      */
@@ -50,8 +53,8 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
         $this->MCONF['name'] = $this->moduleName;
         $this->getLanguageService()->includeLLFile('EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf');
 
-        $this->doc = GeneralUtility::makeInstance("TYPO3\\CMS\\Backend\\Template\\DocumentTemplate");
-        $this->doc->form='<form action="" method="post">';
+        $this->doc = GeneralUtility::makeInstance(DocumentTemplate::class);
+        $this->doc->form = '<form action="" method="post">';
         $this->doc->backPath = $GLOBALS['BACK_PATH'];
         $this->doc->styleSheetFile2 = '../typo3conf/ext/cachemgm/Resources/Public/BackendModule/styles.css';
 
@@ -75,10 +78,10 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Configuration of menu
      *
-     * @return	void
+     * @return    void
      */
-    function menuConfig()	{
-
+    public function menuConfig()
+    {
         // MENU-ITEMS:
         // If array, then it's a selector box menu
         // If empty string it's just a variable, that'll be saved.
@@ -92,36 +95,40 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
             )
         );
         // CLEANSE SETTINGS
-        $this->MOD_SETTINGS = BackendUtility::getModuleData($this->MOD_MENU, GeneralUtility::_GP("SET"), $this->MCONF["name"], "ses");
+        $this->MOD_SETTINGS = BackendUtility::getModuleData(
+            $this->MOD_MENU, GeneralUtility::_GP("SET"),
+            $this->MCONF["name"], "ses"
+        );
     }
 
     /**
      * Main dispatch function
      *
-     * @return	void
+     * @return    void
      */
-    function main()	{
-        $this->content="";
-        $this->content.=$this->doc->startPage("Cache Management Tools, Analysis and Benchmarking");
+    public function main()
+    {
+        $this->content = "";
+        $this->content .= $this->doc->startPage("Cache Management Tools, Analysis and Benchmarking");
 
-        $menu=BackendUtility::getFuncMenu(0,"SET[function]",$this->MOD_SETTINGS["function"],$this->MOD_MENU["function"]);
+        $menu = BackendUtility::getFuncMenu(0, "SET[function]", $this->MOD_SETTINGS["function"], $this->MOD_MENU["function"]);
 
-        $this->content.=$this->doc->header("Cache Management Tools, Analysis and Benchmarking");
-        $this->content.=$this->doc->spacer(5);
-        $this->content.=$this->doc->section('',$menu);
+        $this->content .= $this->doc->header("Cache Management Tools, Analysis and Benchmarking");
+        $this->content .= $this->doc->spacer(5);
+        $this->content .= $this->doc->section('', $menu);
 
-        switch($this->MOD_SETTINGS["function"])	{
+        switch ($this->MOD_SETTINGS["function"]) {
             case "cache_stat":
-                $this->content.= $this->cache_stat();
+                $this->content .= $this->cache_stat();
                 break;
             case "cachingframework_stat":
-                $this->content.= $this->cachingframework_stat();
+                $this->content .= $this->cachingframework_stat();
                 break;
             case "db_bm":
-                $this->content.= $this->db_bm();
+                $this->content .= $this->db_bm();
                 break;
             case "file_bm":
-                $this->content.= $this->file_bm();
+                $this->content .= $this->file_bm();
                 break;
         }
     }
@@ -129,9 +136,10 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Printing content
      *
-     * @return	void
+     * @return void
      */
-    function printContent()	{
+    public function printContent()
+    {
         $this->content .= $this->doc->endPage();
         echo $this->content;
     }
@@ -139,9 +147,10 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Creates stats on the cache_hash table
      *
-     * @return	void
+     * @return void
      */
-    function cache_stat() {
+    public function cache_stat()
+    {
         $output = '<input type="submit" name="_test_cache_hash" value="Count records in cache_hash"/><br/><br />(Do not do this if you plan to run DB select analysis on the table in a moment or the numbers will reflect effects of MySQL caching)';
 
         if (GeneralUtility::_POST('_test_cache_hash')) {
@@ -152,37 +161,38 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
                 'tag'
             );
 
-            $output.= 'Count:'.$this->debugRows($cache_hash_counts,'',1);
+            $output .= 'Count:' . $this->debugRows($cache_hash_counts, '', 1);
         }
 
-        $this->content.=$this->doc->section('Showing "cache_hash" numbers:',$output);
+        $this->content .= $this->doc->section('Showing "cache_hash" numbers:', $output);
     }
 
     /**
      * Creates stats on the cache_hash table
      *
-     * @return	void
+     * @return void
      */
-    function cachingframework_stat()	{
-        /* @var $infoService Tx_Cachemgm_Controller_CachingFrameworkInfoService */
-        $infoService = GeneralUtility::makeInstance('Tx_Cachemgm_Controller_CachingFrameworkInfoService');
+    public function cachingframework_stat()
+    {
+        /* @var $infoService CachingFrameworkInfoService */
+        $infoService = GeneralUtility::makeInstance(CachingFrameworkInfoService::class);
         $subAction = GeneralUtility::_GP('cachingFrameWorkSubAction');
-        $output='';
+        $output = '';
         switch ($subAction) {
             case 'details':
                 $cacheId = GeneralUtility::_GP('cacheId');
                 $output .= $infoService->printOverviewForCache($cacheId);
-                $this->content.=$this->doc->section('Details for Cache: '.$cacheId,$output);
+                $this->content .= $this->doc->section('Details for Cache: ' . $cacheId, $output);
                 break;
             case 'flush':
                 $cacheId = GeneralUtility::_GP('cacheId');
-                $output .= '<p class="warning">'.$cacheId.' flushed!</p>';
+                $output .= '<p class="warning">' . $cacheId . ' flushed!</p>';
                 $infoService->flushCacheByCacheId($cacheId);
             default:
                 $output .= "<p>You can adjust the Caching configuration in your localconf.php. Using <pre>\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>";
-                $output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: '."\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend';".'</p>';
+                $output .= '<br> You can also use the cli log tool when you use the Statistic Variable frontend: ' . "\$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['extbase_object']['frontend'] = 'Tx_Cachemgm_Cache_Frontend_LogableVariableFrontend';" . '</p>';
                 $output .= $infoService->printOverview();
-                $this->content.=$this->doc->section('Available Cache Backends:',$output);
+                $this->content .= $this->doc->section('Available Cache Backends:', $output);
                 break;
         }
     }
@@ -190,115 +200,123 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Database Benchmarking
      *
-     * @return	void
+     * @return void
      */
-    function db_bm()	{
+    public function db_bm()
+    {
 
         $TEST_db_access_all = GeneralUtility::_POST('_test_db_access_ALL');
-        $TEST_db_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_db_access_number'),1,2000,100);
+        $TEST_db_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_db_access_number'), 1,
+            2000, 100);
 
-        $output.='<br/><br/>';
-        $output.='<h3>DB record Access<h3/>';
-        $output.='<p>This will allow you to test the reading speed of records from tables in the database by reading a number of random records from the database using the first row in each index.<br/>
+        $output  = '<br/><br/>';
+        $output .= '<h3>DB record Access<h3/>';
+        $output .= '<p>This will allow you to test the reading speed of records from tables in the database by reading a number of random records from the database using the first row in each index.<br/>
 					The same records will be read three times. In the first pass (Pass1) you can expect a higher number than for the next two reads (Pass2 and Pass3). This is because MySQL or file system will cache.
 					The test works best when the number of records in a table row is higher than the number of records read. Especially if you perform the test multiple times you will get increasingly "better performance" in the first pass because of caching.
 					Ideally your test should start out with a rebooted and non-busy website to make sure no file/db caches are full. Well, you figure...<br>
 					In the sample below you can see that 100 records are tested on for the PRIMARY key. It takes 42 ms meaning each record took 0.4 ms to read. When using another index for the table only 31 records was selected. It took 14ms and divided by 31 it ends at 0.5 ms per record.<br>
-					<img src="'.ExtensionManagementUtility::extRelPath('cachemgm').'Resources/Public/BackendModule/db_read.png" hspace="5" vspace="5" alt="" />
+					<img src="' . ExtensionManagementUtility::extRelPath('cachemgm') . 'Resources/Public/BackendModule/db_read.png" hspace="5" vspace="5" alt="" />
 					<p/>';
-        $output.='<input type="text" name="_test_db_access_number" value="'.htmlspecialchars($TEST_db_access_number).'" /> number of records to read.<br/>';
-        $output.='<input type="submit" name="_test_db_access_ALL" value="Test ALL tables" onclick="return confirm(\'You sure?\');"/>';
+        $output .= '<input type="text" name="_test_db_access_number" value="' . htmlspecialchars($TEST_db_access_number) . '" /> number of records to read.<br/>';
+        $output .= '<input type="submit" name="_test_db_access_ALL" value="Test ALL tables" onclick="return confirm(\'You sure?\');"/>';
 
-        $output.='<br/><br/><br/>';
-
+        $output .= '<br/><br/><br/>';
 
 
         // All tables:
         $allTables = $GLOBALS['TYPO3_DB']->admin_get_tables();
         $info = array();
 
-        $navTable='<table>';
-        $navTable.='<tr class="tableheader">
+        $navTable = '<table>';
+        $navTable .= '<tr class="tableheader">
 					<td>Table name:</td>
 					<td>Records:</td>
 					<td>Test:</td>
 				</tr>';
 
-        foreach($allTables as $table => $tableInformation) {
+        foreach ($allTables as $table => $tableInformation) {
             if (isset($tableInformation['Rows'])) {
                 $count = $tableInformation['Rows'];
             } else {
                 $count = $GLOBALS['TYPO3_DB']->exec_SELECTcountRows('*', $table);
             }
 
-            if (GeneralUtility::_POST('_test_db_access_'.$table))	{
-                $output.='<input type="submit" name="_test_db_access_'.$table.'" value="Reload Test for '.$table.'" />';
+            if (GeneralUtility::_POST('_test_db_access_' . $table)) {
+                $output .= '<input type="submit" name="_test_db_access_' . $table . '" value="Reload Test for ' . $table . '" />';
             }
-            if ($TEST_db_access_all || GeneralUtility::_POST('_test_db_access_'.$table))	{
+            if ($TEST_db_access_all || GeneralUtility::_POST('_test_db_access_' . $table)) {
                 // All keys, find those that are first in sequence:
                 $allKeys = $GLOBALS['TYPO3_DB']->admin_get_keys($table);
 
                 $keysToLookUp = array();
-                foreach($allKeys as $indexInfo)	{
-                    if ((int)$indexInfo['Seq_in_index']===1)	{
+                foreach ($allKeys as $indexInfo) {
+                    if ((int)$indexInfo['Seq_in_index'] === 1) {
                         $keysToLookUp[$indexInfo['Key_name']] = $indexInfo['Column_name'];
                     }
                 }
 
                 // FOr all first-in-sequence keys, lets find a number of random values:
-                foreach($keysToLookUp as $keyname=>$field)	{
-                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($field.', RAND() as randNum',$table,'1=1',$field,'randNum',$TEST_db_access_number,$field);
-                    $info[$table.'_'.$keyname]['Table'] = $table;
-                    $info[$table.'_'.$keyname]['Count'] = $count;
-                    $info[$table.'_'.$keyname]['Key'] = $keyname;
-                    $info[$table.'_'.$keyname]['Field'] = $field;
-                    $info[$table.'_'.$keyname]['Records'] = count($rows) ? $rows : '';
+                foreach ($keysToLookUp as $keyname => $field) {
+                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($field . ', RAND() as randNum', $table, '1=1',
+                        $field, 'randNum', $TEST_db_access_number, $field);
+                    $info[$table . '_' . $keyname]['Table'] = $table;
+                    $info[$table . '_' . $keyname]['Count'] = $count;
+                    $info[$table . '_' . $keyname]['Key'] = $keyname;
+                    $info[$table . '_' . $keyname]['Field'] = $field;
+                    $info[$table . '_' . $keyname]['Records'] = count($rows) ? $rows : '';
                 }
             }
 
-            $navTable.='<tr>
-				<td>'.$table.'</td>
-				<td>'.$count.'</td>
-				<td><input type="submit" name="_test_db_access_'.$table.'" value="Test" /></td>
+            $navTable .= '<tr>
+				<td>' . $table . '</td>
+				<td>' . $count . '</td>
+				<td><input type="submit" name="_test_db_access_' . $table . '" value="Test" /></td>
 			</tr>';
         }
-        $navTable.='</table>';
+        $navTable .= '</table>';
 
 
         // Reading records 1:
-        foreach($info as $tableKey => $data)	{
-            if (is_array($data['Records']))	{
+        foreach ($info as $tableKey => $data) {
+            if (is_array($data['Records'])) {
                 $pt_record = GeneralUtility::milliseconds();
-                foreach($data['Records'] as $rec)	{
-                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*',$data['Table'],$data['Field'].'='.$GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']],$data['Table']),'','',1);
+                foreach ($data['Records'] as $rec) {
+                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $data['Table'],
+                        $data['Field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']], $data['Table']),
+                        '', '', 1);
                     #echo count($rows);
                 }
-                $td = GeneralUtility::milliseconds()-$pt_record;
+                $td = GeneralUtility::milliseconds() - $pt_record;
                 $info[$tableKey]['Pass1'] = $td;
 #				$info[$tableKey]['Pass1_Read100'] = round((GeneralUtility::milliseconds()-$pt_record)/count($data['Records'])*100);
             }
         }
 
         // Reading records 2:
-        foreach($info as $tableKey => $data)	{
-            if (is_array($data['Records']))	{
+        foreach ($info as $tableKey => $data) {
+            if (is_array($data['Records'])) {
                 $pt_record = GeneralUtility::milliseconds();
-                foreach($data['Records'] as $rec)	{
-                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*',$data['Table'],$data['Field'].'='.$GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']],$data['Table']),'','',1);
+                foreach ($data['Records'] as $rec) {
+                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $data['Table'],
+                        $data['Field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']], $data['Table']),
+                        '', '', 1);
                 }
-                $td = GeneralUtility::milliseconds()-$pt_record;
+                $td = GeneralUtility::milliseconds() - $pt_record;
                 $info[$tableKey]['Pass2'] = $td;
             }
         }
 
         // Reading records 3:
-        foreach($info as $tableKey => $data)	{
-            if (is_array($data['Records']))	{
+        foreach ($info as $tableKey => $data) {
+            if (is_array($data['Records'])) {
                 $pt_record = GeneralUtility::milliseconds();
-                foreach($data['Records'] as $rec)	{
-                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*',$data['Table'],$data['Field'].'='.$GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']],$data['Table']),'','',1);
+                foreach ($data['Records'] as $rec) {
+                    $rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $data['Table'],
+                        $data['Field'] . '=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($rec[$data['Field']], $data['Table']),
+                        '', '', 1);
                 }
-                $td = GeneralUtility::milliseconds()-$pt_record;
+                $td = GeneralUtility::milliseconds() - $pt_record;
                 $info[$tableKey]['Pass3'] = $td;
             }
 
@@ -306,71 +324,80 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
             unset($info[$tableKey]['Records']);
         }
 
-        $output.= $this->debugRows($info,'',1);
-        $output.= $navTable;
-        $this->content.=$this->doc->section('Testing db access:',$output);
+        $output .= $this->debugRows($info, '', 1);
+        $output .= $navTable;
+        $this->content .= $this->doc->section('Testing db access:', $output);
     }
 
     /**
      * File system benchmarking
      *
-     * @return	void
+     * @return void
      */
-    function file_bm()	{
+    public function file_bm()
+    {
 
         $TEST_file_access = GeneralUtility::_POST('_test_file_access');
         $TEST_file_write = GeneralUtility::_POST('_test_file_write');
-        $TEST_file_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_file_access_number'),1,200,10);
-        $TEST_file_levels = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_file_levels'),0,99,0);
+        $TEST_file_access_number = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_file_access_number'),
+            1, 200, 10);
+        $TEST_file_levels = MathUtility::forceIntegerInRange(GeneralUtility::_POST('_test_file_levels'), 0, 99, 0);
 
-        $output.='<br/><br/>';
-        $output.='<h3>File Access<h3/>';
-        $output.='<p>For each directory listed below this test will pick a number of random files and read the full contents of them while measuring the time it takes. This can give you a hint if file access is slow on your system.<br/>
+        $output .= '<br/><br/>';
+        $output .= '<h3>File Access<h3/>';
+        $output .= '<p>For each directory listed below this test will pick a number of random files and read the full contents of them while measuring the time it takes. This can give you a hint if file access is slow on your system.<br/>
 					The output shows the files read, their size and three columns 0,1,2 which shows the read time for three consecutive read operations. Usually column 0 will contain a higher number than column 1 and 2 which should be the same since the first read (column 0 time) will indicate the performance without the file system cache and read 2 and 3 (Columns 1+2) will indicate the delivery when the file system has cached the file. Also, an average is calculated.<br/>
-					<img src="'.ExtensionManagementUtility::extRelPath('cachemgm').'Resources/Public/BackendModule/file_access.png" hspace="5" vspace="5" alt="" /><p/>';
-        $output.='<input type="text" name="_test_file_access_number" value="'.htmlspecialchars($TEST_file_access_number).'" /> number of files picked.<br/>';
-        $output.='<input type="submit" name="_test_file_access" value="Test File Access Times" />';
+					<img src="' . ExtensionManagementUtility::extRelPath('cachemgm') . 'Resources/Public/BackendModule/file_access.png" hspace="5" vspace="5" alt="" /><p/>';
+        $output .= '<input type="text" name="_test_file_access_number" value="' . htmlspecialchars($TEST_file_access_number) . '" /> number of files picked.<br/>';
+        $output .= '<input type="submit" name="_test_file_access" value="Test File Access Times" />';
 
-        $output.='<br/><br/>';
-        $output.='<h3>File Write<h3/>';
-        $output.='<p>Will write 3 temporary files of 100kb to each directory below, measure the time it takes to write, read and delete the files. The output will display that in milliseconds in a table like the one shown here:<br/>
-					<img src="'.ExtensionManagementUtility::extRelPath('cachemgm').'Resources/Public/BackendModule/file_write.png" hspace="5" vspace="5" alt="" /><p/>';
-        $output.='<input type="submit" name="_test_file_write" value="Test File Write Times" />';
+        $output .= '<br/><br/>';
+        $output .= '<h3>File Write<h3/>';
+        $output .= '<p>Will write 3 temporary files of 100kb to each directory below, measure the time it takes to write, read and delete the files. The output will display that in milliseconds in a table like the one shown here:<br/>
+					<img src="' . ExtensionManagementUtility::extRelPath('cachemgm') . 'Resources/Public/BackendModule/file_write.png" hspace="5" vspace="5" alt="" /><p/>';
+        $output .= '<input type="submit" name="_test_file_write" value="Test File Write Times" />';
 
-        $output.='<br/><br/><br/>';
+        $output .= '<br/><br/><br/>';
 
-        $output.='<select name="_test_file_levels">
-			<option value="0"'.($TEST_file_levels==0?' selected="selected"':'').'>No sub levels</option>
-			<option value="1"'.($TEST_file_levels==1?' selected="selected"':'').'>1 sub level</option>
-			<option value="2"'.($TEST_file_levels==2?' selected="selected"':'').'>2 sub levels</option>
-			<option value="3"'.($TEST_file_levels==3?' selected="selected"':'').'>3 sub levels</option>
-			<option value="4"'.($TEST_file_levels==4?' selected="selected"':'').'>4 sub levels</option>
-			<option value="99"'.($TEST_file_levels==99?' selected="selected"':'').'>Infinite</option>
+        $output .= '<select name="_test_file_levels">
+			<option value="0"' . ($TEST_file_levels == 0 ? ' selected="selected"' : '') . '>No sub levels</option>
+			<option value="1"' . ($TEST_file_levels == 1 ? ' selected="selected"' : '') . '>1 sub level</option>
+			<option value="2"' . ($TEST_file_levels == 2 ? ' selected="selected"' : '') . '>2 sub levels</option>
+			<option value="3"' . ($TEST_file_levels == 3 ? ' selected="selected"' : '') . '>3 sub levels</option>
+			<option value="4"' . ($TEST_file_levels == 4 ? ' selected="selected"' : '') . '>4 sub levels</option>
+			<option value="99"' . ($TEST_file_levels == 99 ? ' selected="selected"' : '') . '>Infinite</option>
 		</select><input type="submit" name="_" value="Refresh" />';
 
 
-        $folderInfo = $this->getFolderInfo('fileadmin/',$TEST_file_levels);
-        if($TEST_file_access)	$this->addFileAccessInfo($folderInfo,$TEST_file_access_number);
-        if($TEST_file_write)	$this->addFileWriteFiles($folderInfo);
-        $output.= $this->debugRows($folderInfo,'PATH: fileadmin/',1,1);
+        $folderInfo = $this->getFolderInfo('fileadmin/', $TEST_file_levels);
+        if ($TEST_file_access) {
+            $this->addFileAccessInfo($folderInfo, $TEST_file_access_number);
+        }
+        if ($TEST_file_write) {
+            $this->addFileWriteFiles($folderInfo);
+        }
+        $output .= $this->debugRows($folderInfo, 'PATH: fileadmin/', 1, 1);
 
-        $folderInfo = $this->getFolderInfo('typo3temp/',$TEST_file_levels);
-        if($TEST_file_access)	$this->addFileAccessInfo($folderInfo,$TEST_file_access_number);
-        if($TEST_file_write)	$this->addFileWriteFiles($folderInfo);
-        $output.= $this->debugRows($folderInfo,'PATH: typo3temp/',1,1);
+        $folderInfo = $this->getFolderInfo('typo3temp/', $TEST_file_levels);
+        if ($TEST_file_access) {
+            $this->addFileAccessInfo($folderInfo, $TEST_file_access_number);
+        }
+        if ($TEST_file_write) {
+            $this->addFileWriteFiles($folderInfo);
+        }
+        $output .= $this->debugRows($folderInfo, 'PATH: typo3temp/', 1, 1);
 
-        $folderInfo = $this->getFolderInfo('uploads/',$TEST_file_levels);
-        if($TEST_file_access)	$this->addFileAccessInfo($folderInfo,$TEST_file_access_number);
-        if($TEST_file_write)	$this->addFileWriteFiles($folderInfo);
-        $output.= $this->debugRows($folderInfo,'PATH: uploads/',1,1);
+        $folderInfo = $this->getFolderInfo('uploads/', $TEST_file_levels);
+        if ($TEST_file_access) {
+            $this->addFileAccessInfo($folderInfo, $TEST_file_access_number);
+        }
+        if ($TEST_file_write) {
+            $this->addFileWriteFiles($folderInfo);
+        }
+        $output .= $this->debugRows($folderInfo, 'PATH: uploads/', 1, 1);
 
-        $this->content.=$this->doc->section('Testing file access:',$output);
+        $this->content .= $this->doc->section('Testing file access:', $output);
     }
-
-
-
-
-
 
     /***************************
      *
@@ -382,20 +409,23 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
      * Recursively gather all files and folders of a path.
      * Usage: 5
      *
-     * @param	array		$fileArr: Empty input array (will have files added to it)
-     * @param	string		$path: The path to read recursively from (absolute) (include trailing slash!)
-     * @param	integer		$recursivityLevels: The number of levels to dig down...
-     * @param	string		$excludePattern: regex pattern of files/directories to exclude
-     * @return	array		An array with the found files/directories.
+     * @param    array $fileArr : Empty input array (will have files added to it)
+     * @param    string $path : The path to read recursively from (absolute) (include trailing slash!)
+     * @param    integer $recursivityLevels : The number of levels to dig down...
+     * @param    string $excludePattern : regex pattern of files/directories to exclude
+     * @return    array        An array with the found files/directories.
      */
-    function getAllFoldersInPath($fileArr,$path,$recursivityLevels=99,$excludePattern='')	{
+    private function getAllFoldersInPath($fileArr, $path, $recursivityLevels = 99, $excludePattern = '')
+    {
         $fileArr[] = $path;
 
         $dirs = GeneralUtility::get_dirs($path);
-        if (is_array($dirs) && $recursivityLevels>0)	{
-            foreach ($dirs as $subdirs)	{
-                if ((string)$subdirs!='' && (!strlen($excludePattern) || !preg_match('/^'.$excludePattern.'$/',$subdirs)))	{
-                    $fileArr = $this->getAllFoldersInPath($fileArr,$path.$subdirs.'/',$recursivityLevels-1,$excludePattern);
+        if (is_array($dirs) && $recursivityLevels > 0) {
+            foreach ($dirs as $subdirs) {
+                if ((string)$subdirs != '' && (!strlen($excludePattern) || !preg_match('/^' . $excludePattern . '$/',
+                            $subdirs))) {
+                    $fileArr = $this->getAllFoldersInPath($fileArr, $path . $subdirs . '/', $recursivityLevels - 1,
+                        $excludePattern);
                 }
             }
         }
@@ -405,23 +435,25 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Reads information about folders in a directory
      *
-     * @param	string		Path relative to PATH_site
-     * @param	integer		Recursivity into folders
-     * @return	array		Info array.
+     * @param    string        Path relative to PATH_site
+     * @param    integer        Recursivity into folders
+     * @return    array        Info array.
      */
-    function getFolderInfo($subpath,$recursivity=99)	{
-        $path = PATH_site.$subpath;
-        $file_bm = GeneralUtility::removePrefixPathFromList($this->getAllFoldersInPath(array(),$path,$recursivity),PATH_site);
+    private function getFolderInfo($subpath, $recursivity = 99)
+    {
+        $path = PATH_site . $subpath;
+        $file_bm = GeneralUtility::removePrefixPathFromList($this->getAllFoldersInPath(array(), $path, $recursivity),
+            PATH_site);
         $info = array();
         $postDir = GeneralUtility::_POST('_dir');
-        foreach($file_bm as $relPath)	{
-            $relPath.='';
+        foreach ($file_bm as $relPath) {
+            $relPath .= '';
 
             $pt = GeneralUtility::milliseconds();
 
             $info[$relPath] = array();
             $info[$relPath]['Directory'] = $relPath;
-            $numFiles = GeneralUtility::getFilesInDir(PATH_site.$relPath);
+            $numFiles = GeneralUtility::getFilesInDir(PATH_site . $relPath);
             $info[$relPath]['numFiles'] = count($numFiles);
 
             /*
@@ -431,8 +463,8 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
             }
             $info[$relPath]['bytes'] = GeneralUtility::formatSize($sizes);
             */
-            $info[$relPath]['statInfoMS'] = GeneralUtility::milliseconds()-$pt;
-            $info[$relPath]['Select'] = '<input type="checkbox" value="1" name="_dir['.htmlspecialchars($relPath).']" '.($postDir[$relPath]?'checked="checked"':'').'/>';
+            $info[$relPath]['statInfoMS'] = GeneralUtility::milliseconds() - $pt;
+            $info[$relPath]['Select'] = '<input type="checkbox" value="1" name="_dir[' . htmlspecialchars($relPath) . ']" ' . ($postDir[$relPath] ? 'checked="checked"' : '') . '/>';
         }
 
         return $info;
@@ -441,46 +473,49 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Adds information about files access times in folders to $info array
      *
-     * @param	array		Information array from getFoldersInfo()
-     * @param	integer		Number of random files to return
-     * @return	void
+     * @param    array        Information array from getFoldersInfo()
+     * @param    integer        Number of random files to return
+     * @return    void
      */
-    function addFileAccessInfo(&$info,$testAccess=10)	{
+    private function addFileAccessInfo(&$info, $testAccess = 10)
+    {
 
         $postDir = GeneralUtility::_POST('_dir');
-        foreach($info as $relPath => $infA)	{
-            if ($testAccess > 0 && $postDir[$relPath])	{
-                $numFiles = GeneralUtility::getFilesInDir(PATH_site.$relPath);
+        foreach ($info as $relPath => $infA) {
+            if ($testAccess > 0 && $postDir[$relPath]) {
+                $numFiles = GeneralUtility::getFilesInDir(PATH_site . $relPath);
                 shuffle($numFiles);
 
-                for($a=0;$a<3;$a++)	{
-                    $c=0;
+                for ($a = 0; $a < 3; $a++) {
+                    $c = 0;
                     reset($numFiles);
-                    foreach($numFiles as $file)	{
-                        $info[$relPath]['testAccess'][$file]['file']=$file;
-                        $info[$relPath]['testAccess'][$file]['size']=filesize(PATH_site.$relPath.$file);
+                    foreach ($numFiles as $file) {
+                        $info[$relPath]['testAccess'][$file]['file'] = $file;
+                        $info[$relPath]['testAccess'][$file]['size'] = filesize(PATH_site . $relPath . $file);
 
-                        $pt_file=GeneralUtility::milliseconds();
-                        $fileContents = GeneralUtility::getUrl(PATH_site.$relPath.$file);
-                        $info[$relPath]['testAccess'][$file][$a]=GeneralUtility::milliseconds()-$pt_file;
+                        $pt_file = GeneralUtility::milliseconds();
+                        $fileContents = GeneralUtility::getUrl(PATH_site . $relPath . $file);
+                        $info[$relPath]['testAccess'][$file][$a] = GeneralUtility::milliseconds() - $pt_file;
 
                         $c++;
-                        if ($c>=$testAccess)	break;
+                        if ($c >= $testAccess) {
+                            break;
+                        }
                     }
                 }
 
-                if (is_array($info[$relPath]['testAccess']))	{
-                    $aStats=array();
-                    foreach($info[$relPath]['testAccess'] as $k => $v)	{
-                        $aStats[0]+=$v[0];
-                        $aStats[1]+=$v[1];
-                        $aStats[2]+=$v[2];
+                if (is_array($info[$relPath]['testAccess'])) {
+                    $aStats = array();
+                    foreach ($info[$relPath]['testAccess'] as $k => $v) {
+                        $aStats[0] += $v[0];
+                        $aStats[1] += $v[1];
+                        $aStats[2] += $v[2];
                     }
                     $rc = count($info[$relPath]['testAccess']);
-                    $info[$relPath]['testAccess']['AVG']['file']='Average';
-                    $info[$relPath]['testAccess']['AVG'][0]=round($aStats[0]/$rc);
-                    $info[$relPath]['testAccess']['AVG'][1]=round($aStats[1]/$rc);
-                    $info[$relPath]['testAccess']['AVG'][2]=round($aStats[2]/$rc);
+                    $info[$relPath]['testAccess']['AVG']['file'] = 'Average';
+                    $info[$relPath]['testAccess']['AVG'][0] = round($aStats[0] / $rc);
+                    $info[$relPath]['testAccess']['AVG'][1] = round($aStats[1] / $rc);
+                    $info[$relPath]['testAccess']['AVG'][2] = round($aStats[2] / $rc);
                 }
             } else {
                 $info[$relPath]['testAccess'] = '-';
@@ -491,64 +526,68 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Adds information about files write times in folders to $info array
      *
-     * @param	array		Information array from getFoldersInfo()
-     * @param	integer		Number of files to create
-     * @param	integer		Content length in bytes
-     * @return	void
+     * @param    array        Information array from getFoldersInfo()
+     * @param    integer        Number of files to create
+     * @param    integer        Content length in bytes
+     * @return    void
      */
-    function addFileWriteFiles(&$info,$files=3,$contentlength=100000)	{
+    private function addFileWriteFiles(&$info, $files = 3, $contentlength = 100000)
+    {
 
         $postDir = GeneralUtility::_POST('_dir');
-        if ($files > 0 && $contentlength>0)	{
-            $contentString = str_pad('TYPO3 Extension "cachemgm" testing file writing. Should have been deleted by writing process, if not, delete it!!   ',$contentlength,'0123456789ABCDEF'.chr(10));
+        if ($files > 0 && $contentlength > 0) {
+            $contentString = str_pad('TYPO3 Extension "cachemgm" testing file writing. Should have been deleted by writing process, if not, delete it!!   ',
+                $contentlength, '0123456789ABCDEF' . chr(10));
 
             $tempFileNames = array();
-            for($a=0;$a<$files;$a++)	{
-                $tempFileNames[] = '_TEMP_ext_cachemgm_'.$a.'_'.md5(uniqid('lalal'));
+            for ($a = 0; $a < $files; $a++) {
+                $tempFileNames[] = '_TEMP_ext_cachemgm_' . $a . '_' . md5(uniqid('lalal'));
             }
 
-            foreach($info as $relPath => $infA)	{
-                if ($postDir[$relPath])	{
+            foreach ($info as $relPath => $infA) {
+                if ($postDir[$relPath]) {
                     // Check if they exist:
                     clearstatcache();
-                    foreach($tempFileNames as $fileToWrite)	{
+                    foreach ($tempFileNames as $fileToWrite) {
                         $info[$relPath]['testWrite'][$fileToWrite]['Write File:'] = $fileToWrite;
-                        if (file_exists(PATH_site.$relPath.$fileToWrite))	die(PATH_site.$relPath.$fileToWrite.' EXISTED - it should not.');
+                        if (file_exists(PATH_site . $relPath . $fileToWrite)) {
+                            die(PATH_site . $relPath . $fileToWrite . ' EXISTED - it should not.');
+                        }
                     }
 
                     // Write them:
                     clearstatcache();
-                    foreach($tempFileNames as $number => $fileToWrite)	{
-                        $pt_file=GeneralUtility::milliseconds();
-                        GeneralUtility::writeFile(PATH_site.$relPath.$fileToWrite,$contentString);
-                        if (file_exists(PATH_site.$relPath.$fileToWrite))	{
-                            $info[$relPath]['testWrite'][$fileToWrite]['write']=GeneralUtility::milliseconds()-$pt_file;
+                    foreach ($tempFileNames as $number => $fileToWrite) {
+                        $pt_file = GeneralUtility::milliseconds();
+                        GeneralUtility::writeFile(PATH_site . $relPath . $fileToWrite, $contentString);
+                        if (file_exists(PATH_site . $relPath . $fileToWrite)) {
+                            $info[$relPath]['testWrite'][$fileToWrite]['write'] = GeneralUtility::milliseconds() - $pt_file;
                         } else {
-                            $info[$relPath]['testWrite'][$fileToWrite]['write']='ERROR: NOT WRITTEN!';
+                            $info[$relPath]['testWrite'][$fileToWrite]['write'] = 'ERROR: NOT WRITTEN!';
                         }
                     }
 
                     // Read back:
                     clearstatcache();
-                    foreach($tempFileNames as $number => $fileToWrite)	{
-                        $pt_file=GeneralUtility::milliseconds();
-                        GeneralUtility::getURL(PATH_site.$relPath.$fileToWrite);
-                        if (file_exists(PATH_site.$relPath.$fileToWrite))	{
-                            $info[$relPath]['testWrite'][$fileToWrite]['read']=GeneralUtility::milliseconds()-$pt_file;
+                    foreach ($tempFileNames as $number => $fileToWrite) {
+                        $pt_file = GeneralUtility::milliseconds();
+                        GeneralUtility::getURL(PATH_site . $relPath . $fileToWrite);
+                        if (file_exists(PATH_site . $relPath . $fileToWrite)) {
+                            $info[$relPath]['testWrite'][$fileToWrite]['read'] = GeneralUtility::milliseconds() - $pt_file;
                         } else {
-                            $info[$relPath]['testWrite'][$fileToWrite]['read']='ERROR: NOT EXISTING!';
+                            $info[$relPath]['testWrite'][$fileToWrite]['read'] = 'ERROR: NOT EXISTING!';
                         }
                     }
 
                     // Delete them:
                     clearstatcache();
-                    foreach($tempFileNames as $number => $fileToWrite)	{
-                        $pt_file=GeneralUtility::milliseconds();
-                        unlink(PATH_site.$relPath.$fileToWrite);
-                        if (!file_exists(PATH_site.$relPath.$fileToWrite))	{
-                            $info[$relPath]['testWrite'][$fileToWrite]['delete']=GeneralUtility::milliseconds()-$pt_file;
+                    foreach ($tempFileNames as $number => $fileToWrite) {
+                        $pt_file = GeneralUtility::milliseconds();
+                        unlink(PATH_site . $relPath . $fileToWrite);
+                        if (!file_exists(PATH_site . $relPath . $fileToWrite)) {
+                            $info[$relPath]['testWrite'][$fileToWrite]['delete'] = GeneralUtility::milliseconds() - $pt_file;
                         } else {
-                            $info[$relPath]['testWrite'][$fileToWrite]['delete']='ERROR: NOT DELETED!';
+                            $info[$relPath]['testWrite'][$fileToWrite]['delete'] = 'ERROR: NOT DELETED!';
                         }
                     }
                 } else {
@@ -562,47 +601,54 @@ class Tx_Cachemgm_Controller_BackendModuleController extends BaseScriptClass {
     /**
      * Displays an array as rows in a table. Useful to debug output like an array of database records.
      *
-     * @param	array		Array of arrays with similar keys
-     * @param	string		Table header
-     * @param	boolean		If TRUE, will return content instead of echo'ing out.
-     * @param	boolean		If set, values are not htmlspecialchar()'ed. Thus allows HTML in.
-     * @return	void		Outputs to browser.
+     * @param    array        Array of arrays with similar keys
+     * @param    string        Table header
+     * @param    boolean        If TRUE, will return content instead of echo'ing out.
+     * @param    boolean        If set, values are not htmlspecialchar()'ed. Thus allows HTML in.
+     * @return    void        Outputs to browser.
      */
-    function debugRows($rows,$header='',$returnHTML=FALSE,$noHSC=FALSE)	{
-        if (is_array($rows))	{
+    private function debugRows($rows, $header = '', $returnHTML = false, $noHSC = false)
+    {
+        if (is_array($rows)) {
             reset($rows);
             $firstEl = current($rows);
-            if (is_array($firstEl))	{
+            if (is_array($firstEl)) {
                 $headerColumns = array_keys($firstEl);
                 $tRows = array();
 
                 // Header:
-                $tRows[] = '<tr><td colspan="'.count($headerColumns).'" style="background-color:#bbbbbb; font-family: verdana,arial; font-weight: bold; font-size: 10px;"><strong>'.htmlspecialchars($header).'</strong></td></tr>';
+                $tRows[] = '<tr><td colspan="' . count($headerColumns) . '" style="background-color:#bbbbbb; font-family: verdana,arial; font-weight: bold; font-size: 10px;"><strong>' . htmlspecialchars($header) . '</strong></td></tr>';
                 $tCells = array();
-                foreach($headerColumns as $key)	{
+                foreach ($headerColumns as $key) {
                     $tCells[] = '
-							<td><font face="Verdana,Arial" size="1"><strong>'.htmlspecialchars($key).'</strong></font></td>';
+							<td><font face="Verdana,Arial" size="1"><strong>' . htmlspecialchars($key) . '</strong></font></td>';
                 }
                 $tRows[] = '
-						<tr>'.implode('',$tCells).'
+						<tr>' . implode('', $tCells) . '
 						</tr>';
 
                 // Rows:
-                foreach($rows as $singleRow)	{
+                foreach ($rows as $singleRow) {
                     $tCells = array();
-                    foreach($headerColumns as $key)	{
+                    foreach ($headerColumns as $key) {
                         $tCells[] = '
-							<td><font face="Verdana,Arial" size="1">'.(is_array($singleRow[$key]) ? $this->debugRows($singleRow[$key],'',TRUE) : ($noHSC?$singleRow[$key]:htmlspecialchars($singleRow[$key]))).'</font></td>';
+							<td><font face="Verdana,Arial" size="1">' . (is_array($singleRow[$key]) ? $this->debugRows($singleRow[$key],
+                                '',
+                                true) : ($noHSC ? $singleRow[$key] : htmlspecialchars($singleRow[$key]))) . '</font></td>';
                     }
                     $tRows[] = '
-						<tr>'.implode('',$tCells).'
+						<tr>' . implode('', $tCells) . '
 						</tr>';
                 }
 
                 $table = '
-					<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">'.implode('',$tRows).'
+					<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">' . implode('', $tRows) . '
 					</table>';
-                if ($returnHTML)	return $table; else echo $table;
+                if ($returnHTML) {
+                    return $table;
+                } else {
+                    echo $table;
+                }
             }
         }
     }

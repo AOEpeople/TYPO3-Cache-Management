@@ -1,4 +1,6 @@
 <?php
+namespace Aoe\Cachemgm\Cache\Frontend;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,6 +24,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Aoe\Cachemgm\Cache\MemoryLogWriter;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,92 +36,95 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @api
  * @scope prototype
  */
-class Tx_Cachemgm_Cache_Frontend_LogablePhpFrontend extends PhpFrontend {
-	
-	/**
-	 * @var Tx_Cachemgm_Cache_MemoryLogWriter
-	 */
-	protected $cacheLog;
+class LogablePhpFrontend extends PhpFrontend
+{
+    /**
+     * @var MemoryLogWriter
+     */
+    protected $cacheLog;
 
-	/**
-	 * Initializes this cache frontend
-	 *
-	 * @return void
-	 */
-	public function initializeObject() {
-		$this->cacheLog = GeneralUtility::makeInstance('Tx_Cachemgm_Cache_MemoryLogWriter');
-	}
+    /**
+     * Initializes this cache frontend
+     *
+     * @return void
+     */
+    public function initializeObject()
+    {
+        $this->cacheLog = GeneralUtility::makeInstance(MemoryLogWriter::class);
+    }
 
-	/**
-	 * Saves the PHP source code in the cache.
-	 *
-	 * @param string $entryIdentifier An identifier used for this cache entry, for example the class name
-	 * @param string $sourceCode PHP source code
-	 * @param array $tags Tags to associate with this cache entry
-	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
-	 * @return void
-	 * @throws \InvalidArgumentException If $entryIdentifier or $tags is invalid
-	 * @throws \TYPO3\CMS\Core\Cache\Exception\InvalidDataException If $sourceCode is not a string
-	 * @api
-	 */
-	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETSTART);
-		$result = parent::set($entryIdentifier, $variable,  $tags , $lifetime );
-		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_SETEND, $startTime);
-		return $result;
-	}
-		
-	/**
-	 * Loads PHP code from the cache and require_onces it right away.
-	 *
-	 * @param string $entryIdentifier An identifier which describes the cache entry to load
-	 * @return mixed Potential return value from the include operation
-	 * @api
-	 */
-	public function requireOnce($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_REQOSTART);
-		$result = parent::requireOnce($entryIdentifier);
-		$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_REQOEND, $startTime);
-		return $result;
-	}
-	
-	/**
-	 * Finds and returns a variable value from the cache.
-	 *
-	 * @param string $entryIdentifier Identifier of the cache entry to fetch
-	 * @return mixed The value
-	 * @throws \InvalidArgumentException if the identifier is not valid
-	 * @api
-	 */
-	public function get($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_GETSTART);
-		$result = parent::get($entryIdentifier, $variable,  $tags , $lifetime );
-		if ($result !== false) {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HIT, $startTime);
-		}
-		else {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_MISS, $startTime);
-		}		
-		return $result;
-	}
+    /**
+     * Saves the PHP source code in the cache.
+     *
+     * @param string $entryIdentifier An identifier used for this cache entry, for example the class name
+     * @param string $sourceCode PHP source code
+     * @param array $tags Tags to associate with this cache entry
+     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+     * @return void
+     * @throws \InvalidArgumentException If $entryIdentifier or $tags is invalid
+     * @throws \TYPO3\CMS\Core\Cache\Exception\InvalidDataException If $sourceCode is not a string
+     * @api
+     */
+    public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = null)
+    {
+        $startTime = $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_SETSTART);
+        $result = parent::set($entryIdentifier, $variable, $tags, $lifetime);
+        $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_SETEND, $startTime);
+        return $result;
+    }
 
-	/**
-	 * Checks if a cache entry with the specified identifier exists.
-	 *
-	 * @param string $entryIdentifier An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @throws \InvalidArgumentException If $entryIdentifier is invalid
-	 * @api
-	 */
-	public function has($entryIdentifier) {
-		$startTime = $this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASSTART);
-		$result = parent::get($entryIdentifier, $variable,  $tags , $lifetime );
-		if ($result !== false) {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASHIT, $startTime);
-		}
-		else {
-			$this->cacheLog->log($this->getIdentifier(),$entryIdentifier,Tx_Cachemgm_Cache_MemoryLogWriter::ACTION_HASMISS, $startTime);
-		}		
-		return $result;
-	}
+    /**
+     * Loads PHP code from the cache and require_onces it right away.
+     *
+     * @param string $entryIdentifier An identifier which describes the cache entry to load
+     * @return mixed Potential return value from the include operation
+     * @api
+     */
+    public function requireOnce($entryIdentifier)
+    {
+        $startTime = $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_REQOSTART);
+        $result = parent::requireOnce($entryIdentifier);
+        $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_REQOEND, $startTime);
+        return $result;
+    }
+
+    /**
+     * Finds and returns a variable value from the cache.
+     *
+     * @param string $entryIdentifier Identifier of the cache entry to fetch
+     * @return mixed The value
+     * @throws \InvalidArgumentException if the identifier is not valid
+     * @api
+     */
+    public function get($entryIdentifier)
+    {
+        $startTime = $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_GETSTART);
+        $result = parent::get($entryIdentifier, $variable, $tags, $lifetime);
+        if ($result !== false) {
+            $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_HIT, $startTime);
+        } else {
+            $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_MISS, $startTime);
+        }
+        return $result;
+    }
+
+    /**
+     * Checks if a cache entry with the specified identifier exists.
+     *
+     * @param string $entryIdentifier An identifier specifying the cache entry
+     * @return boolean TRUE if such an entry exists, FALSE if not
+     * @throws \InvalidArgumentException If $entryIdentifier is invalid
+     * @api
+     */
+    public function has($entryIdentifier)
+    {
+        $startTime = $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_HASSTART);
+        $result = parent::get($entryIdentifier, $variable, $tags, $lifetime);
+        if ($result !== false) {
+            $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_HASHIT, $startTime);
+        } else {
+            $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_HASMISS, $startTime);
+        }
+        return $result;
+    }
 }

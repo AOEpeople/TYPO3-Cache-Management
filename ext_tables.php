@@ -1,7 +1,7 @@
 <?php
 if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
-if (TYPO3_MODE=='BE')	{
+if (TYPO3_MODE=='BE') {
 	// Add Backend-Module
 	$iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
 	$iconRegistry->registerIcon(
@@ -19,7 +19,7 @@ if (TYPO3_MODE=='BE')	{
 		'',
 		'',
 		[
-			'routeTarget' => Tx_Cachemgm_Controller_BackendModuleController::class . '::mainAction',
+			'routeTarget' => Aoe\Cachemgm\Controller\BackendModuleController::class . '::mainAction',
 			'name' => 'tools_txcachemgmM1',
 			'access' => 'admin',
 			'labels' => [
@@ -28,8 +28,6 @@ if (TYPO3_MODE=='BE')	{
 			'iconIdentifier' => 'module-cachemgm-backend-module'
 		]
 	);
-
-
 
 		// Add Web>Info module (cache_pages et al.)
 	TYPO3\CMS\Core\Utility\ExtensionManagementUtility::insertModuleFunction(
