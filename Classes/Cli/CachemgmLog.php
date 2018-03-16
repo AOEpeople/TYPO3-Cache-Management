@@ -30,7 +30,7 @@ use Aoe\Cachemgm\Cache\MemoryLogWriter;
 use TYPO3\CMS\Core\Controller\CommandLineController;
 
 /**
- * CLI Controller for displaying and listenig to cache logs
+ * CLI Controller for displaying and listening to cache logs
  *
  * @author danielpotzinger
  */
@@ -63,7 +63,7 @@ class CachemgmLog extends CommandLineController
         $this->cli_options[] = array(
             '--filterAction',
             'Filter for action',
-            'This will only evaluate logs mathcing the action'
+            'This will only evaluate logs matching the action'
         );
 
 
@@ -89,7 +89,7 @@ class CachemgmLog extends CommandLineController
     }
 
     /**
-     * prints cache statitic summary
+     * prints cache statistic summary
      */
     public function finalStatPrint()
     {

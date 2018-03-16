@@ -26,7 +26,7 @@ namespace Aoe\Cachemgm\Cli;
  ***************************************************************/
 
 /**
- * CLI Controller for displaying and listenig to cache logs
+ * CLI Controller for displaying and listening to cache logs
  *
  * @author danielpotzinger
  */
@@ -67,7 +67,7 @@ class CachemgmTop extends CachemgmLog
     }
 
     /**
-     * prints cache statitic summary
+     * prints cache statistic summary
      */
     public function finalStatPrint()
     {

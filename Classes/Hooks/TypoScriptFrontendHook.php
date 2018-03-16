@@ -1,5 +1,5 @@
 <?php
-namespace Aoe\Cachemgm\Hook;
+namespace Aoe\Cachemgm\Hooks;
 
 /***************************************************************
  *  Copyright notice

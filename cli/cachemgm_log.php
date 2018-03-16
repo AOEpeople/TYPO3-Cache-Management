@@ -6,8 +6,8 @@ declare(ticks = 1);
 pcntl_signal(SIGTERM, "signal_handler");
 pcntl_signal(SIGINT, "signal_handler");
 
-$cliObj = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Aoe\Cachemgm\Cli\CachemgmLog::class);
-
+/** @var \Aoe\Cachemgm\Cli\CachemgmLog $cliObj */
+$cliObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Aoe\Cachemgm\Cli\CachemgmLog::class);
 
 function signal_handler($signal) {
     global $cliObj;
