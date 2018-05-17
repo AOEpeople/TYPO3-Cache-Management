@@ -19,7 +19,7 @@ if (TYPO3_MODE=='BE') {
 		'',
 		'',
 		[
-			'routeTarget' => Aoe\Cachemgm\Controller\BackendModuleController::class . '::mainAction',
+			'routeTarget' => \Aoe\Cachemgm\Controller\BackendModuleController::class . '::mainAction',
 			'name' => 'tools_txcachemgmM1',
 			'access' => 'admin',
 			'labels' => [
@@ -32,8 +32,8 @@ if (TYPO3_MODE=='BE') {
 		// Add Web>Info module (cache_pages et al.)
 	TYPO3\CMS\Core\Utility\ExtensionManagementUtility::insertModuleFunction(
 		'web_info',
-		'tx_cachemgm_modfunc1',
+        \Aoe\Cachemgm\Backend\BackendModule::class,
 		null,
-		'LLL:EXT:cachemgm/locallang.xlf:moduleFunction.tx_cachemgm_modfunc1'
+		'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:moduleFunction.tx_cachemgm_modfunc1'
 	);
 }
