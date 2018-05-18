@@ -234,8 +234,8 @@ class BackendModule extends AbstractFunctionModule
 
                     $cacheDetailUrl = BackendUtility::getModuleUrl(GeneralUtility::_GET('M'),
                         array('id' => $this->pObj->id, 'showID' => htmlspecialchars($hash)));
-                    $tCells[] = '<td>' . ($id ? (htmlspecialchars($id) . ' - ') : '') . '<a href="' . $cacheDetailUrl . '"><u>' . $GLOBALS['LANG']->sL('LLL:EXT:cachemgm/locallang.xlf:details',
-                            true) . '</u></a></td>';
+                    $tCells[] = '<td>' . ($id ? (htmlspecialchars($id) . ' - ') : '') . '<a href="' . $cacheDetailUrl . '"><u>' .
+                        $GLOBALS['LANG']->sL('EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf', true) . '</u></a></td>';
                     $tCells[] = '<td>' . htmlspecialchars($hash) . '</td>';
 
                     // Compile Row:
