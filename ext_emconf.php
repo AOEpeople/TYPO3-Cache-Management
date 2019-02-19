@@ -1,16 +1,5 @@
 <?php
-
-########################################################################
-# Extension Manager/Repository config file for ext "cachemgm".
-#
-# Auto generated 12-09-2011 21:12
-#
-# Manual updates:
-# Only the data in the array - everything else is removed by next
-# writing. "version" and "dependencies" must not be touched!
-########################################################################
-
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
     'title' => 'Cache Management Extension',
     'description' => 'Provides management of the page caching for high traffic websites.',
     'category' => 'module',
@@ -29,13 +18,13 @@ $EM_CONF[$_EXTKEY] = array(
     'clearCacheOnLoad' => 0,
     'lockType' => '',
     'author_company' => '',
-    'version' => '3.2.0',
-    'constraints' => array(
-        'depends' => array(
+    'version' => '3.2.1',
+    'constraints' => [
+        'depends' => [
             'typo3' => '7.6.0-7.6.99',
-        ),
-        'conflicts' => array(),
-        'suggests' => array(),
-    ),
+        ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
     '_md5_values_when_last_written' => '',
-);
+];
