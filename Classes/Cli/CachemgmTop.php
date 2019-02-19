@@ -88,11 +88,7 @@ class CachemgmTop extends CachemgmLog
 
     protected function printTop()
     {
-        if (function_exists('ncurses_clear')) {
-            ncurses_clear();
-        } else {
-            echo str_repeat(PHP_EOL, 140);
-        }
+        echo str_repeat(PHP_EOL, 140);
 
         echo 'Top #' . $this->logAmount . ' Cache Idendifiers: ' . PHP_EOL;
         echo ' count                 cache                   idendifier ' . PHP_EOL;
