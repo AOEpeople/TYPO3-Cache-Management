@@ -114,7 +114,7 @@ class BackendModuleController extends BaseScriptClass
         $menu = BackendUtility::getFuncMenu(0, "SET[function]", $this->MOD_SETTINGS["function"], $this->MOD_MENU["function"]);
 
         $this->content .= $this->doc->header("Cache Management Tools, Analysis and Benchmarking");
-        $this->content .= $this->doc->spacer(5);
+        $this->content .= "<div style='padding-top: 5px;'></div>";
         $this->content .= $this->doc->section('', $menu);
 
         switch ($this->MOD_SETTINGS["function"]) {
