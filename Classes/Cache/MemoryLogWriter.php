@@ -68,32 +68,54 @@ class MemoryLogWriter implements SingletonInterface
      */
     protected $processId;
 
-    protected $communicationRessourceHandle;
+    protected $communicationResourceHandle;
 
     /**
      * @var string
      */
     protected $shmMode = 'c';
 
-
     /**
      * @var boolean
      */
     protected $enabled = false;
-
 
     /**
      * checks and opens shared memory
      */
     public function __construct()
     {
-        $this->initCommunicationRessource();
-        if (empty($this->communicationRessourceHandle)) {
+        $this->initCommunicationResource();
+        if (empty($this->communicationResourceHandle)) {
             return;
         }
         $this->enabled = true;
-        $this->processId = getmypid();
-        $this->log('-', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'), self::ACTION_LOGINIT);
+        $this->setProcessId(getmypid());
+        //$this->log('-', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'), self::ACTION_LOGINIT);
+    }
+
+    /**
+     * @param $processId
+     */
+    public function setProcessId($processId)
+    {
+        $this->processId = $processId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProcessId()
+    {
+        return $this->processId;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnable(bool $enabled)
+    {
+        $this->enabled = $enabled;
     }
 
     public function isEnabled()
@@ -106,7 +128,7 @@ class MemoryLogWriter implements SingletonInterface
      * @param string $cacheId
      * @param string $identifier
      * @param string $cacheAction
-     * @param integer $timestampStart Optional - if set it is used to caluclate and log the used time
+     * @param integer $timestampStart Optional - if set it is used to calculate and log the used time
      * @return integer timestamp
      */
     public function log($cacheId, $identifier, $cacheAction, $timestampStart = null)
@@ -114,6 +136,7 @@ class MemoryLogWriter implements SingletonInterface
         if (!$this->isEnabled()) {
             //return;
         }
+
         $microtime = microtime(true);
 
         $cacheLogData = array(
@@ -129,13 +152,13 @@ class MemoryLogWriter implements SingletonInterface
         }
         switch ($this->communicationMode) {
             case 'msg':
-                @msg_send($this->communicationRessourceHandle, 1, $cacheLogData, true, false);
+                @msg_send($this->communicationResourceHandle, 1, $cacheLogData, true, false);
                 break;
             case 'shmop':
-                @shmop_write($this->communicationRessourceHandle, serialize($cacheLogData), 0);
+                @shmop_write($this->communicationResourceHandle, serialize($cacheLogData), 0);
                 break;
             case 'shm':
-                @shm_put_var($this->communicationRessourceHandle, 1, $cacheLogData);
+                @shm_put_var($this->communicationResourceHandle, 1, $cacheLogData);
                 break;
         }
         self::$i++;
@@ -144,27 +167,25 @@ class MemoryLogWriter implements SingletonInterface
 
     /**
      * sets $this->communicationRessourceHandle
-     * (remains null if not sucessfull)
+     * (remains null if not successful)
      */
-    private function initCommunicationRessource()
+    private function initCommunicationResource()
     {
-        $this->communicationRessourceHandle = null;
+        $this->communicationResourceHandle = null;
         $key = ftok(dirname(__FILE__) . '/MemoryLogWriter.php', 'R');
         switch ($this->communicationMode) {
             case 'msg':
-                $this->communicationRessourceHandle = msg_get_queue($key, 0644);
+                $this->communicationResourceHandle = msg_get_queue($key, 0644);
                 break;
             case 'shmop':
                 if (!function_exists('shmop_open')) {
                     return;
                 }
-                $this->communicationRessourceHandle = shmop_open($key, $this->shmMode, 0644, 1000);
+                $this->communicationResourceHandle = shmop_open($key, $this->shmMode, 0644, 1000);
                 break;
             case 'shm':
-                $this->communicationRessourceHandle = shm_attach($key, 1000, 0644);
+                $this->communicationResourceHandle = shm_attach($key, 1000, 0644);
                 break;
         }
     }
-
-
 }

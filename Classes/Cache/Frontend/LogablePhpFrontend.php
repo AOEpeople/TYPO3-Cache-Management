@@ -4,13 +4,14 @@ namespace Aoe\Cachemgm\Cache\Frontend;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2009-2011 Daniel Pötzinger
+ *  (c) 2019 AOE GmbH <dev@aoe.com>
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
+ *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  The GNU General Public License can be found at
@@ -68,13 +69,13 @@ class LogablePhpFrontend extends PhpFrontend
     public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = null)
     {
         $startTime = $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_SETSTART);
-        $result = parent::set($entryIdentifier, $variable, $tags, $lifetime);
+        $result = parent::set($entryIdentifier, $sourceCode, $tags, $lifetime);
         $this->cacheLog->log($this->getIdentifier(), $entryIdentifier, MemoryLogWriter::ACTION_SETEND, $startTime);
         return $result;
     }
 
     /**
-     * Loads PHP code from the cache and require_onces it right away.
+     * Loads PHP code from the cache and require_once it right away.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
      * @return mixed Potential return value from the include operation

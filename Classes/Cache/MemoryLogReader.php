@@ -44,7 +44,7 @@ class MemoryLogReader extends MemoryLogWriter
      * @param integer $previousNr
      * @param string $cacheFilter
      * @param string $actionFilter
-     * @return array with cache, cacheIdendifier, action, timestamp, timedifference
+     * @return array with cache, cacheIdentifier, action, timestamp, time difference
      */
     public function getNextLog($previousNr, $cacheFilter = null, $actionFilter = null)
     {
@@ -70,16 +70,16 @@ class MemoryLogReader extends MemoryLogWriter
             case 'msg':
                 $msgtype = null;
                 $data = null;
-                $result = msg_receive($this->communicationRessourceHandle, 1, $msgtype, 1000, $data);
+                $result = msg_receive($this->communicationResourceHandle, 1, $msgtype, 1000, $data);
                 break;
             case 'shmop':
-                $data = shmop_read($this->communicationRessourceHandle, 0, 1000);
+                $data = shmop_read($this->communicationResourceHandle, 0, 1000);
                 if (!empty($data)) {
                     $data = unserialize($data);
                 }
                 break;
             case 'shm':
-                $data = shm_get_var($this->communicationRessourceHandle, 1);
+                $data = shm_get_var($this->communicationResourceHandle, 1);
                 if (!empty($data)) {
                     $data = unserialize($data);
                 }
