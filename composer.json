@@ -18,13 +18,13 @@
     ],
     "require": {
         "php": "^7.0",
-        "typo3/cms-core": ">=7.6.0",
-        "typo3/cms-backend": ">=7.6.0",
-        "typo3/cms-frontend": ">=7.6.0",
+        "typo3/cms-core": ">=8.7.0",
+        "typo3/cms-backend": ">=8.7.0",
+        "typo3/cms-frontend": ">=8.7.0",
         "psr/http-message": "^1.0"
     },
     "require-dev": {
-        "typo3/cms": "^7.6"
+        "typo3/cms": "^8.7"
     },
     "keywords": [
         "TYPO3",
