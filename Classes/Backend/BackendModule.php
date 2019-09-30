@@ -61,10 +61,10 @@ class BackendModule extends AbstractFunctionModule
 
         return [
             'depth' => [
-                0 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_0'),
-                1 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_1'),
-                2 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_2'),
-                3 => $LANG->sL('LLL:EXT:lang/locallang_core.xlf:labels.depth_3')
+                0 => $LANG->sL('LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:labels.depth_0'),
+                1 => $LANG->sL('LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:labels.depth_1'),
+                2 => $LANG->sL('LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:labels.depth_2'),
+                3 => $LANG->sL('LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:labels.depth_3')
             ]
         ];
     }
@@ -319,7 +319,7 @@ class BackendModule extends AbstractFunctionModule
         $theOutput .= '<pre>' . htmlspecialchars($cache_data_formatted) . '</pre>';
 
         $cacheListViewUrl = BackendUtility::getModuleUrl(GeneralUtility::_GET('M'), array('id' => $this->pObj->id));
-        $theOutput .= '<a href="' . $cacheListViewUrl . '">' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xlf:back',
+        $theOutput .= '<a href="' . $cacheListViewUrl . '">' . $GLOBALS['LANG']->sL('LLL:EXT:lang/Resources/Private/Language/locallang_common.xlf:back',
                 true) . '</a>';
 
         return $theOutput;
