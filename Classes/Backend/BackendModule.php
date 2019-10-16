@@ -174,7 +174,7 @@ class BackendModule extends AbstractFunctionModule
 
                 // Compile Row:
                 $output .= '
-						<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
+						<tr">
 							' . implode('
 							', $tCells) . '
 						</tr>';
@@ -189,7 +189,7 @@ class BackendModule extends AbstractFunctionModule
 
                 // Compile Row:
                 $output .= '
-						<tr class="bgColor' . ($cc % 2 ? '-20' : '-10') . '">
+						<tr>
 							' . implode('
 							', $tCells) . '
 						</tr>';
@@ -239,9 +239,8 @@ class BackendModule extends AbstractFunctionModule
                     $tCells[] = '<td>' . htmlspecialchars($hash) . '</td>';
 
                     // Compile Row:
-                    $trClass = ($page_sizes && strlen($inf['HTML']) && strlen($inf['HTML']) < 1000 ? 'bgColor6' : 'bgColor' . ($cc % 2 ? '-20' : '-10'));
                     $output .= '
-						<tr class="' . $trClass . '">
+						<tr>
 							' . implode('
 							', $tCells) . '
 						</tr>';
@@ -275,14 +274,16 @@ class BackendModule extends AbstractFunctionModule
         $tCells[] = '<td>Entry Hash String:</td>';
 
         $output = '
-			<tr class="bgColor5 tableheader">
-				' . implode('
-				', $tCells) . '
-			</tr>' . $output;
+			<thead>
+                <tr>
+                    ' . implode('
+                    ', $tCells) . '
+			    </tr>
+			</thead>' . $output;
 
         // Compile final table and return:
         $output = '
-		<table border="0" cellspacing="1" cellpadding="0" class="lrPadding c-list">' . $output . '
+		<table border="0" cellspacing="1" cellpadding="0" class="table table-striped table-hover typo3-page-pages">' . $output . '
 		</table>';
 
         return $output;
