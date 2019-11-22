@@ -3,11 +3,53 @@
     <file source-language="en" datatype="plaintext" original="messages" date="2017-03-24T17:03:33Z" product-name="cachemgm">
         <header/>
         <body>
+            <trans-unit id="mlang_labels_tablabel">
+                <source>Cache Management</source>
+            </trans-unit>
+            <trans-unit id="bemodule.header">
+                <source>Caching Framework Information</source>
+            </trans-unit>
+            <trans-unit id="bemodule.description.header">
+                <source>Available Cache Backends:</source>
+            </trans-unit>
+            <trans-unit id="bemodule.description">
+                <source>You can adjust the Caching configuration in your ext_localconf.php. Using</source>
+            </trans-unit>
+            <trans-unit id="bemodule.cache_name">
+                <source>Cache name</source>
+            </trans-unit>
+            <trans-unit id="bemodule.cache_type">
+                <source>Type</source>
+            </trans-unit>
+            <trans-unit id="bemodule.cache_backend">
+                <source>Backend</source>
+            </trans-unit>
+            <trans-unit id="bemodule.cache_option">
+                <source>Options</source>
+            </trans-unit>
+            <trans-unit id="bemodule.action_details">
+                <source>Details</source>
+            </trans-unit>
+            <trans-unit id="bemodule.action_back">
+                <source>Back to overview</source>
+            </trans-unit>
+            <trans-unit id="bemodule.action_flush">
+                <source>Flush</source>
+            </trans-unit>
+            <trans-unit id="bemodule.warning.not_writeable">
+                <source>Not Writable</source>
+            </trans-unit>
+            <trans-unit id="bemodule.flash.header">
+                <source>Cached Flushed</source>
+            </trans-unit>
+            <trans-unit id="bemodule.flash.success">
+                <source>Cache for %s is successfully flushed!</source>
+            </trans-unit>
             <trans-unit id="details" xml:space="preserve">
                 <source>Details</source>
             </trans-unit>
-            <trans-unit id="moduleFunction.tx_cachemgm_modfunc1" xml:space="preserve">
-                <source>Cache Management</source>
+            <trans-unit id="bemodule.detail.header">
+                <source>Details for Cache:</source>
             </trans-unit>
         </body>
     </file>

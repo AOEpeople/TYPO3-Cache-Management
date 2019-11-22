@@ -1,0 +1,46 @@
+<f:layout name="BackendModule"/>
+
+<f:section name="Headline">
+    <f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.header" default="Cache Framework Infos"/>
+</f:section>
+
+<f:section name="Content">
+    <h4>
+        <f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.description.header"/>
+    </h4>
+    <p>
+        <f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.description"/>
+        <pre>$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>
+    </p>
+
+    <table border="0" cellspacing="1" cellpadding="0" class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <td><f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.cache_name" default="Cache name"/></td>
+            <td><f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.cache_type" default="Type"/></td>
+            <td><f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.cache_backend" default="Backend"/></td>
+            <td><f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.cache_options" default="Options"/></td>
+            <td>&nbsp;</td>
+        </tr>
+        </thead>
+        <tbody>
+        <f:for each="{cacheConfigurations}" as="cacheConfiguration">
+            <tr>
+                <td>{cacheConfiguration.name}</td>
+                <td>{cacheConfiguration.type}</td>
+                <td>{cacheConfiguration.backend}</td>
+                <td><f:format.raw>{cacheConfiguration.options}</f:format.raw></td>
+                <td>
+                    <a class="btn btn-info" href="{cacheConfiguration.detailsUrl}">
+                        <f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_details" default="Details"/>
+                    </a>
+                    <a class="btn btn-danger"  onclick="return confirm('Are you sure you want to flush the cache?')" href="{cacheConfiguration.flushUrl}">
+                        <f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_flush" default="Flush"/>
+                    </a>
+                </td>
+            </tr>
+        </f:for>
+        </tbody>
+    </table>
+
+</f:section>
