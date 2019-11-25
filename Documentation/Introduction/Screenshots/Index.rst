@@ -16,7 +16,7 @@
 Screenshots
 ^^^^^^^^^^^
 
-Example of the overview of cached pages from the tree:
+Example of the available Cache Backends:
 
-.. image:: /Images/backend_processlist.png
+.. image:: /Images/cachemgm_cachebackends.png
 

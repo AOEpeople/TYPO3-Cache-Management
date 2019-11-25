@@ -18,8 +18,9 @@
 What does it do?
 ^^^^^^^^^^^^^^^^
 
-Gives an overview of cached instances of page ids from the page tree and thus allows you to analyze if the size of your cache_page is within expected limits. This can reveal poor usages of &cHash links and non-optimal usage of TypoScript template conditions.
+The AOE Cache Management extensions, gives an overview of which TYPO3 Caches is in place.
 
-Also it includes a suite of Database and file system performance tools, as well as over view of the cache_hash content. More tools could be included in the future.
+You have a list of all cache registered under `$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']`,
+and you will be able to look into the details of the cache type and to flush the cache individually if needed.
 
-Also includes a re-caching hook for usage with the “crawler” extension.
+The cache manager also includes a re-caching hook for usage with the “crawler” extension.
