@@ -31,7 +31,6 @@ use Nimut\TestingFramework\TestCase\UnitTestCase;
 
 class CacheUtilityTest extends UnitTestCase
 {
-
     public function setUp()
     {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'] = [
@@ -122,5 +121,4 @@ class CacheUtilityTest extends UnitTestCase
         $this->assertContains('first', $cacheOptions);
         $this->assertContains('second', $cacheOptions);
     }
-
 }

@@ -28,5 +28,4 @@ namespace Aoe\Cachemgm\Domain\Repository;
 
 class CacheTableRepository extends AbstractRepository
 {
-
 }

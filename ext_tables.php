@@ -25,7 +25,7 @@ if (TYPO3_MODE == 'BE') {
         [
             'access' => 'admin',
             'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.svg',
-            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/BackendModule/Language/locallang_mod.xlf',
+            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/BackendModule/Language/locallang.xlf',
         ]
     );
 }

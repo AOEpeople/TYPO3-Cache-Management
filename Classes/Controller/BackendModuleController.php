@@ -94,7 +94,6 @@ class BackendModuleController extends ActionController
         $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
         $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
         $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
-
     }
 
     public function indexAction()
@@ -231,7 +230,8 @@ class BackendModuleController extends ActionController
      */
     private function triggerFlashMessages($cacheId)
     {
-        $message = GeneralUtility::makeInstance(FlashMessage::class,
+        $message = GeneralUtility::makeInstance(
+            FlashMessage::class,
             sprintf(
                 $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.success'),
                 $cacheId

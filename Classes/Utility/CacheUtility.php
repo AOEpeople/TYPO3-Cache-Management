@@ -52,5 +52,4 @@ class CacheUtility
     {
         return $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheId];
     }
-
 }

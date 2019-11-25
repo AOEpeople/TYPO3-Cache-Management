@@ -44,7 +44,6 @@ class CacheTableRepositoryTest extends FunctionalTestCase
         parent::setUp();
         $objectManger = GeneralUtility::makeInstance(ObjectManager::class);
         $this->subject = $objectManger->get(CacheTableRepository::class);
-
     }
 
     /**
@@ -58,6 +57,4 @@ class CacheTableRepositoryTest extends FunctionalTestCase
             $this->subject->countRowsInTable('cf_cache_pages')
         );
     }
-
-
 }
