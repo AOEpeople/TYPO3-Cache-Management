@@ -2,6 +2,9 @@
 
 This is a TYPO3-Extension, that provides management of the page caching for high traffic websites.
 
+## Build
+[![Build Status](https://travis-ci.org/AOEpeople/TYPO3-Cache-Management.svg?branch=master)](https://travis-ci.org/AOEpeople/TYPO3-Cache-Management)
+
 ## Download / Installation
 
 You can download and install this extension from the [TER (TYPO3 Extension Repository)][1] or use composer.
