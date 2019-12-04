@@ -10,32 +10,22 @@ if (TYPO3_MODE == 'BE') {
         'module-cachemgm-backend-module',
         \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
         [
-            //'name' => 'database'
-            'source' => 'EXT:cachemgm/ext_icon.svg',
+            'source' => 'EXT:cachemgm/ext_icon.svg'
         ]
     );
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule(
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+        'Aoe.' . $_EXTKEY,
         'tools',
-        'txcachemgmM1',
-        '',
+        'cachemgm',
         '',
         [
-            'routeTarget' => \Aoe\Cachemgm\Controller\BackendModuleController::class . '::mainAction',
-            'name' => 'tools_txcachemgmM1',
+            'BackendModule' => 'index,detail,flush',
+        ],
+        [
             'access' => 'admin',
-            'labels' => [
-                'll_ref' => 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang_mod.xlf'
-            ],
-            'iconIdentifier' => 'module-cachemgm-backend-module'
+            'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.svg',
+            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/BackendModule/Language/locallang.xlf',
         ]
-    );
-
-    // Add Web>Info module (cache_pages et al.)
-    TYPO3\CMS\Core\Utility\ExtensionManagementUtility::insertModuleFunction(
-        'web_info',
-        \Aoe\Cachemgm\Backend\BackendModule::class,
-        null,
-        'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:moduleFunction.tx_cachemgm_modfunc1'
     );
 }
