@@ -1,5 +1,5 @@
 {
-    "name": "typo3-ter/cachemgm",
+    "name": "aoepeople/cachemgm",
     "description": "Provides management of the page caching for high traffic websites",
     "type": "typo3-cms-extension",
     "homepage": "https://github.com/AOEpeople/TYPO3-Cache-Management",
@@ -24,7 +24,8 @@
         "psr/http-message": "^1.0"
     },
     "require-dev": {
-        "typo3/cms": "^8.7"
+        "nimut/testing-framework": "^4.1",
+        "friendsofphp/php-cs-fixer": "^2.15"
     },
     "keywords": [
         "TYPO3",
@@ -43,7 +44,31 @@
     "scripts": {
         "post-autoload-dump": [
             "mkdir -p .Build/Web/typo3conf/ext/",
-            "[ -L .Build/Web/typo3conf/ext/cachemgm ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/cachemgm"
+            "[ -L .Build/Web/typo3conf/ext/cachemgm ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/cachemgm",
+            "export TYPO3_PATH_WEB=$PWD/.Build/Web"
+        ],
+        "test:unit": [
+            "[ -e .Build/bin/phpunit ] || composer update",
+            "TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit --colors -c .Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit"
+        ],
+        "test:functional": [
+            "[ -e .Build/bin/phpunit ] || composer update",
+            "TYPO3_PATH_WEB=$PWD/.Build/Web typo3DatabaseName=cachemgm typo3DatabaseHost=127.0.0.1 typo3DatabaseUsername=root typo3DatabasePassword=root .Build/bin/phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml Tests/Functional"
+        ],
+        "cs-fix": [
+            "[ -e .Build/bin/php-cs-fixer ] || composer update",
+            "./.Build/bin/php-cs-fixer fix Classes/",
+            "./.Build/bin/php-cs-fixer fix Tests/"
+        ],
+        "test:all": [
+            "@test:unit",
+            "@test:functional"
+        ],
+        "extension-release": [
+            "rm -rf Tests/",
+            "rm .gitignore",
+            "rm .scrutinizer.yml",
+            "rm .travis.yml"
         ]
     },
     "extra": {
