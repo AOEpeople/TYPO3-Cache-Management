@@ -28,6 +28,7 @@ namespace Aoe\Cachemgm\Controller;
 use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
 use Aoe\Cachemgm\Utility\CacheUtility;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
+use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
 use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -35,6 +36,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -80,17 +82,10 @@ class BackendModuleController extends ActionController
     }
 
     /**
-     * Set up the doc header properly here
-     *
      * @param ViewInterface $view
      */
     protected function initializeView(ViewInterface $view)
     {
-        if ($view instanceof BackendTemplateView) {
-            /** @var BackendTemplateView $view */
-            parent::initializeView($view);
-        }
-
         $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
         $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
         $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
@@ -98,12 +93,20 @@ class BackendModuleController extends ActionController
 
     public function indexAction()
     {
-        $this->view->assign('cacheConfigurations', $this->buildCacheConfigurationArray());
+        $this->view->assignMultiple([
+            'cacheConfigurations' => $this->buildCacheConfigurationArray(),
+            'action_confirm_flush_message' => $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_confirm_flush')
+            ]);
     }
 
     public function detailAction()
     {
-        $cacheId = $this->request->getArgument('cacheId');
+        try {
+            $cacheId = $this->request->getArgument('cacheId');
+        } catch (NoSuchArgumentException $e) {
+            $this->showFlashMessage($this->getNoCacheFoundMessage());
+            $this->forward('index');
+        }
         $cache = $this->cacheManager->getCache($cacheId);
         $backend = $cache->getBackend();
 
@@ -128,10 +131,15 @@ class BackendModuleController extends ActionController
 
     public function flushAction()
     {
-        $cacheId = $this->request->getArgument('cacheId');
+        try {
+            $cacheId = $this->request->getArgument('cacheId');
+        } catch (NoSuchArgumentException $e) {
+            $this->showFlashMessage($this->getNoCacheFoundMessage());
+            $this->forward('index');
+        }
         $cache = $this->cacheManager->getCache($cacheId);
         $cache->flush();
-        $this->triggerFlashMessages($cacheId);
+        $this->showFlashMessage($this->getFlushCacheMessage($cacheId));
         $this->forward('index');
     }
 
@@ -170,10 +178,10 @@ class BackendModuleController extends ActionController
     }
 
     /**
-     * @param $backend
+     * @param BackendInterface $backend
      * @return array
      */
-    private function getBackendCacheProperties($backend): array
+    private function getBackendCacheProperties(BackendInterface $backend): array
     {
         $reflectionBackend = new \ReflectionObject($backend);
         $properties = $reflectionBackend->getProperties();
@@ -190,10 +198,10 @@ class BackendModuleController extends ActionController
     }
 
     /**
-     * @param $backend
+     * @param BackendInterface $backend
      * @return array|string
      */
-    private function getFileBackendInfo($backend)
+    private function getFileBackendInfo(BackendInterface $backend)
     {
         $fileBackend = [];
         if ($backend instanceof FileBackend) {
@@ -227,22 +235,44 @@ class BackendModuleController extends ActionController
 
     /**
      * @param $cacheId
+     * @return object|FlashMessage
      */
-    private function triggerFlashMessages($cacheId)
+    private function getFlushCacheMessage($cacheId)
     {
         $message = GeneralUtility::makeInstance(
             FlashMessage::class,
             sprintf(
-                $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.success'),
+                $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.success'),
                 $cacheId
             ),
-            $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.header'),
+            $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.header'),
             FlashMessage::OK,
             true
         );
+        return $message;
+    }
 
-        $flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
-        $messageQueue = $flashMessageService->getMessageQueueByIdentifier();
+    /**
+     * @return object|FlashMessage
+     */
+    private function getNoCacheFoundMessage()
+    {
+        $message = GeneralUtility::makeInstance(
+            FlashMessage::class,
+            $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.detailed.error'),
+            '',
+            FlashMessage::NOTICE,
+            true
+        );
+        return $message;
+    }
+
+    /**
+     * @param FlashMessage $message
+     */
+    private function showFlashMessage(FlashMessage $message)
+    {
+        $messageQueue = GeneralUtility::makeInstance(FlashMessageService::class)->getMessageQueueByIdentifier();
         $messageQueue->addMessage($message);
     }
 }

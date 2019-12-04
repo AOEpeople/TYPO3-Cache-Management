@@ -13,6 +13,10 @@ class CacheUtility
         return array_keys($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']);
     }
 
+    /**
+     * @param string $cacheId
+     * @return string
+     */
     public static function getCacheType($cacheId)
     {
         $conf = (new self())->getCacheConfiguration($cacheId);
@@ -23,6 +27,10 @@ class CacheUtility
         return $frontend;
     }
 
+    /**
+     * @param string $cacheId
+     * @return string
+     */
     public static function getCacheBackendType($cacheId)
     {
         $conf = (new self())->getCacheConfiguration($cacheId);
@@ -48,6 +56,10 @@ class CacheUtility
         return $options;
     }
 
+    /**
+     * @param string $cacheId
+     * @return mixed
+     */
     private function getCacheConfiguration($cacheId)
     {
         return $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheId];
