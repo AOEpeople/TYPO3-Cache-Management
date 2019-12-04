@@ -67,7 +67,6 @@
         "extension-release": [
             "rm -rf Tests/",
             "rm .gitignore",
-            "rm .scrutinizer.yml",
             "rm .travis.yml"
         ]
     },
