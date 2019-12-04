@@ -9,7 +9,7 @@ cachemgm
 :Classification:  cachemgm
 :Version:         |release|
 :Language:        en
-:Description:     TODO: ADD DESCRIPTION.
+:Description:     Provides management of the page caching for high traffic websites.
 :Keywords:        cache
 :Copyright:       2005-2019
 :Author:          Kasper Skårhøj & AOE GmbH
