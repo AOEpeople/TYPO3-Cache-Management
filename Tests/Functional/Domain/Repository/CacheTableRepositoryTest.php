@@ -28,7 +28,6 @@ namespace Aoe\Cachemgm\Tests\Functional\Domain\Repository;
 
 use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
@@ -52,9 +51,8 @@ class CacheTableRepositoryTest extends FunctionalTestCase
      */
     public function countRowsInTable()
     {
-        $version = (new Typo3Version())->getMajorVersion();
-        if($version === 10) {
-            $this->markTestSkipped('This test is only valid for TYPO3 10 LTS');
+        if($this->isTYPO310LTS()) {
+            $this->markTestSkipped('This test is only valid for TYPO3 8 and 9 LTS');
         }
 
         $this->importDataSet(__DIR__ . '/Fixtures/cf_cache_pages.xml');
@@ -70,8 +68,7 @@ class CacheTableRepositoryTest extends FunctionalTestCase
     public function countRowsInTableV10()
     {
 
-        $version = (new Typo3Version())->getMajorVersion();
-        if($version !== 10) {
+        if(!$this->isTYPO310LTS()) {
             $this->markTestSkipped('This test is only valid for TYPO3 10 LTS');
         }
 
@@ -80,5 +77,16 @@ class CacheTableRepositoryTest extends FunctionalTestCase
             2,
             $this->subject->countRowsInTable('cache_pages')
         );
+    }
+
+    private function isTYPO310LTS(): bool
+    {
+        if(
+            class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
+            && (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() === 10
+        ) {
+            return true;
+        }
+        return false;
     }
 }
