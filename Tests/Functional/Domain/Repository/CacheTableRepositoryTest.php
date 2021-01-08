@@ -67,7 +67,6 @@ class CacheTableRepositoryTest extends FunctionalTestCase
      */
     public function countRowsInTableV10()
     {
-
         if(!$this->isTYPO310LTS()) {
             $this->markTestSkipped('This test is only valid for TYPO3 10 LTS');
         }
