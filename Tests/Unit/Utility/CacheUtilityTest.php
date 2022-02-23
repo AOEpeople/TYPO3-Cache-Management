@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Aoe\Cachemgm\Test\Unit\Utility;
 
 /***************************************************************
@@ -31,7 +32,7 @@ use Nimut\TestingFramework\TestCase\UnitTestCase;
 
 class CacheUtilityTest extends UnitTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'] = [
             'cache_core' => [
@@ -118,7 +119,7 @@ class CacheUtilityTest extends UnitTestCase
     public function getCacheOptions_returnsOptionString()
     {
         $cacheOptions = CacheUtility::getCacheOptions('cache_hash');
-        $this->assertContains('first', $cacheOptions);
-        $this->assertContains('second', $cacheOptions);
+        $this->assertStringContainsString('first', $cacheOptions);
+        $this->assertStringContainsString('second', $cacheOptions);
     }
 }

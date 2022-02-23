@@ -1,31 +1,37 @@
 <?php
+
+use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
+use TYPO3\CMS\Core\Imaging\IconRegistry;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+
 if (!defined('TYPO3_MODE')) {
     die ('Access denied.');
 }
 
 if (TYPO3_MODE == 'BE') {
     // Add Backend-Module
-    $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
+    $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
     $iconRegistry->registerIcon(
         'module-cachemgm-backend-module',
-        \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+        SvgIconProvider::class,
         [
             'source' => 'EXT:cachemgm/ext_icon.svg'
         ]
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-        'Aoe.' . $_EXTKEY,
+    ExtensionUtility::registerModule(
+        'cachemgm',
         'tools',
         'cachemgm',
         '',
         [
-            'BackendModule' => 'index,detail,flush',
+            Aoe\Cachemgm\Controller\BackendModuleController::class => 'index,detail,flush',
         ],
         [
             'access' => 'admin',
-            'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/Extension.svg',
-            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/BackendModule/Language/locallang.xlf',
+            'icon' => 'EXT:' . 'cachemgm' . '/Resources/Public/Icons/Extension.svg',
+            'labels' => 'LLL:EXT:' . 'cachemgm' . '/Resources/Private/BackendModule/Language/locallang.xlf',
         ]
     );
 }
