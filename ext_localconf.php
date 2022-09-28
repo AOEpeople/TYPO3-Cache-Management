@@ -2,7 +2,7 @@
 
 use Aoe\Cachemgm\Hooks\TypoScriptFrontendHook;
 
-if (!defined ('TYPO3_MODE')) die ('Access denied.');
+defined('TYPO3') or die();
 
 if (TYPO3_MODE=='FE')	{
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['headerNoCache']['tx_cachemgm'] =

@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoe\Cachemgm\Hooks;
 
 /***************************************************************
@@ -34,11 +35,9 @@ class TypoScriptFrontendHook
      * That is necessary if you want to make sure to re-cache (or re-index!) a page
      *
      * @param array $params Parameters from frontend
-     * @param TypoScriptFrontendController $ref
-     * @return void
      * @see TypoScriptFrontendController::headerNoCache()
      */
-    public function fe_headerNoCache(&$params, TypoScriptFrontendController $ref)
+    public function fe_headerNoCache(array &$params, TypoScriptFrontendController $ref): void
     {
         if ($this->isCrawlerRunningAndRecachingPage($ref)) {
             // Simple log message:
@@ -51,18 +50,18 @@ class TypoScriptFrontendHook
 
     /**
      * Check if crawler is loaded, a crawler session is running and re-caching is requested as processing instruction
-     *
-     * @param TypoScriptFrontendController $tsfe
-     * @return boolean
      */
-    private function isCrawlerRunningAndRecachingPage(TypoScriptFrontendController $tsfe)
+    private function isCrawlerRunningAndRecachingPage(TypoScriptFrontendController $tsfe): bool
     {
-        if (ExtensionManagementUtility::isLoaded('crawler')
-            && $tsfe->applicationData['tx_crawler']['running']
-            && in_array('tx_cachemgm_recache',
-                $tsfe->applicationData['tx_crawler']['parameters']['procInstructions'])) {
-            return true;
+        if (!ExtensionManagementUtility::isLoaded('crawler')) {
+            return false;
         }
-        return false;
+
+        return $tsfe->applicationData['tx_crawler']['running']
+            && in_array(
+                'tx_cachemgm_recache',
+                $tsfe->applicationData['tx_crawler']['parameters']['procInstructions'],
+                true
+            );
     }
 }

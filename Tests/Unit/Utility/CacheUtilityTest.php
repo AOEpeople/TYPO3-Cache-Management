@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Aoe\Cachemgm\Test\Unit\Utility;
@@ -29,94 +30,74 @@ namespace Aoe\Cachemgm\Test\Unit\Utility;
 
 use Aoe\Cachemgm\Utility\CacheUtility;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
+use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
 
 class CacheUtilityTest extends UnitTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'] = [
             'cache_core' => [
-                'frontend' => 'TYPO3\CMS\Core\Cache\Frontend\PhpFrontend',
-                'backend' => 'TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend',
-                'options' => ''
+                'frontend' => PhpFrontend::class,
+                'backend' => SimpleFileBackend::class,
+                'options' => '',
             ],
             'cache_hash' => [
-                'frontend' => 'TYPO3\CMS\Core\Cache\Frontend\PhpFrontend',
-                'backend' => 'TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend',
+                'frontend' => PhpFrontend::class,
+                'backend' => SimpleFileBackend::class,
                 'options' => [
                     'first' => true,
                     'second' => 1234,
-                ]
+                ],
             ],
-            'no_caches_defined' => []
+            'no_caches_defined' => [],
         ];
     }
 
-    /**
-     * @test
-     */
-    public function getAvailableCaches_returnsArray()
+    public function testGetAvailableCachesReturnsArray()
     {
         $this->assertTrue(is_array(CacheUtility::getAvailableCaches()));
     }
 
-    /**
-     * @test
-     */
-    public function getCacheType_returnsString()
+    public function testGetCacheTypeReturnsString()
     {
-        $this->assertEquals(
+        $this->assertSame(
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_core']['frontend'],
             CacheUtility::getCacheType('cache_core')
         );
     }
 
-    /**
-     * @test
-     */
-    public function getCacheType_returnsDefaultValue()
+    public function testGetCacheTypeReturnsDefaultValue()
     {
-        $this->assertEquals(
+        $this->assertSame(
             'Default (Variable)',
             CacheUtility::getCacheType('no_caches_defined')
         );
     }
 
-    /**
-     * @test
-     */
-    public function getCacheBackend_returnsString()
+    public function testGetCacheBackendReturnsString()
     {
-        $this->assertEquals(
+        $this->assertSame(
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_core']['backend'],
             CacheUtility::getCacheBackendType('cache_core')
         );
     }
 
-    /**
-     * @test
-     */
-    public function getCacheBackend_returnsDefaultValue()
+    public function testGetCacheBackendReturnsDefaultValue()
     {
-        $this->assertEquals(
+        $this->assertSame(
             'Default (DbBackend)',
             CacheUtility::getCacheBackendType('no_caches_defined')
         );
     }
 
-
-    /**
-     * @test
-     */
-    public function getCacheOptions_returnsEmptyString()
+    public function testGetCacheOptionsReturnsEmptyString()
     {
         $this->assertEmpty(CacheUtility::getCacheOptions('cache_core'));
     }
 
-    /**
-     * @test
-     */
-    public function getCacheOptions_returnsOptionString()
+    public function testGetCacheOptionsReturnsOptionString()
     {
         $cacheOptions = CacheUtility::getCacheOptions('cache_hash');
         $this->assertStringContainsString('first', $cacheOptions);

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Aoe\Cachemgm\Domain\Repository;
 
 /***************************************************************
@@ -32,14 +34,13 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class AbstractRepository extends Repository
 {
-    public function countRowsInTable($table)
+    public function countRowsInTable(string $table): int
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
-        $count = $queryBuilder
+        return $queryBuilder
             ->count('*')
             ->from($table)
             ->execute()
             ->fetchColumn(0);
-        return $count;
     }
 }

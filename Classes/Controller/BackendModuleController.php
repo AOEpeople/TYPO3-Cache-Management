@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Aoe\Cachemgm\Controller;
 
 /***************************************************************
@@ -32,6 +34,7 @@ use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
 use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -40,11 +43,9 @@ use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Lang\LanguageService;
 
 class BackendModuleController extends ActionController
 {
-
     /**
      * Backend Template Container
      *
@@ -60,19 +61,19 @@ class BackendModuleController extends ActionController
     protected $view;
 
     /**
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
-    /**
      * @var ObjectManager
      */
     protected $objectManager;
 
     /**
+     * @var CacheManager
+     */
+    private $cacheManager;
+
+    /**
      * @var LanguageService
      */
-    protected $languageService;
+    private $languageService;
 
     public function __construct()
     {
@@ -81,29 +82,21 @@ class BackendModuleController extends ActionController
         $this->languageService = $GLOBALS['LANG'];
     }
 
-    /**
-     * @param ViewInterface $view
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
-        $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
-        $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
-    }
-
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->view->assignMultiple([
             'cacheConfigurations' => $this->buildCacheConfigurationArray(),
-            'action_confirm_flush_message' => $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_confirm_flush')
-            ]);
+            'action_confirm_flush_message' => $this->languageService->sL(
+                'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_confirm_flush'
+            ),
+        ]);
     }
 
-    public function detailAction()
+    public function detailAction(): void
     {
         try {
             $cacheId = $this->request->getArgument('cacheId');
-        } catch (NoSuchArgumentException $e) {
+        } catch (NoSuchArgumentException $noSuchArgumentException) {
             $this->showFlashMessage($this->getNoCacheFoundMessage());
             $this->forward('index');
         }
@@ -129,11 +122,11 @@ class BackendModuleController extends ActionController
         );
     }
 
-    public function flushAction()
+    public function flushAction(): void
     {
         try {
             $cacheId = $this->request->getArgument('cacheId');
-        } catch (NoSuchArgumentException $e) {
+        } catch (NoSuchArgumentException $noSuchArgumentException) {
             $this->showFlashMessage($this->getNoCacheFoundMessage());
             $this->forward('index');
         }
@@ -143,7 +136,17 @@ class BackendModuleController extends ActionController
         $this->forward('index');
     }
 
-    private function buildCacheConfigurationArray()
+    protected function initializeView(ViewInterface $view): void
+    {
+        $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
+        $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
+        $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function buildCacheConfigurationArray(): array
     {
         $cacheConfigurations = [];
 
@@ -154,8 +157,12 @@ class BackendModuleController extends ActionController
                     'type' => CacheUtility::getCacheType($cacheId),
                     'backend' => CacheUtility::getCacheBackendType($cacheId),
                     'options' => CacheUtility::getCacheOptions($cacheId),
-                    'detailsUrl' => $this->getHref('BackendModule', 'detail', ['cacheId' => $cacheId]),
-                    'flushUrl' => $this->getHref('BackendModule', 'flush', ['cacheId' => $cacheId]),
+                    'detailsUrl' => $this->getHref('BackendModule', 'detail', [
+                        'cacheId' => $cacheId,
+                    ]),
+                    'flushUrl' => $this->getHref('BackendModule', 'flush', [
+                        'cacheId' => $cacheId,
+                    ]),
                 ];
         }
 
@@ -164,22 +171,17 @@ class BackendModuleController extends ActionController
 
     /**
      * Creates te URI for a backend action
-     *
-     * @param string $controller
-     * @param string $action
-     * @param array $parameters
-     * @return string
      */
-    private function getHref($controller, $action, $parameters = [])
+    private function getHref(string $controller, string $action, array $parameters = []): string
     {
         $uriBuilder = $this->objectManager->get(UriBuilder::class);
         $uriBuilder->setRequest($this->request);
-        return $uriBuilder->reset()->uriFor($action, $parameters, $controller);
+        return $uriBuilder->reset()
+            ->uriFor($action, $parameters, $controller);
     }
 
     /**
-     * @param BackendInterface $backend
-     * @return array
+     * @return array<string, mixed>
      */
     private function getBackendCacheProperties(BackendInterface $backend): array
     {
@@ -198,7 +200,6 @@ class BackendModuleController extends ActionController
     }
 
     /**
-     * @param BackendInterface $backend
      * @return array|string
      */
     private function getFileBackendInfo(BackendInterface $backend)
@@ -208,7 +209,9 @@ class BackendModuleController extends ActionController
             $fileBackend = 'Cache Folder: ' . $backend->getCacheDirectory();
             if (!is_writable($backend->getCacheDirectory())) {
                 $fileBackend .= '&nbsp;<span class="badge badge-danger">' .
-                    $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.warning.not_writeable')
+                    $this->languageService->sL(
+                        'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.warning.not_writeable'
+                    )
                     . '</span>';
             }
         }
@@ -217,7 +220,7 @@ class BackendModuleController extends ActionController
 
     /**
      * @param $backend
-     * @return array
+     * @return array<string, mixed>
      */
     private function getCacheCount($backend): array
     {
@@ -237,40 +240,41 @@ class BackendModuleController extends ActionController
      * @param $cacheId
      * @return object|FlashMessage
      */
-    private function getFlushCacheMessage($cacheId)
+    private function getFlushCacheMessage($cacheId): object
     {
-        $message = GeneralUtility::makeInstance(
+        return GeneralUtility::makeInstance(
             FlashMessage::class,
             sprintf(
-                $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.success'),
+                $this->languageService->sL(
+                    'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.success'
+                ),
                 $cacheId
             ),
-            $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.header'),
+            $this->languageService->sL(
+                'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.header'
+            ),
             FlashMessage::OK,
             true
         );
-        return $message;
     }
 
     /**
      * @return object|FlashMessage
      */
-    private function getNoCacheFoundMessage()
+    private function getNoCacheFoundMessage(): object
     {
-        $message = GeneralUtility::makeInstance(
+        return GeneralUtility::makeInstance(
             FlashMessage::class,
-            $this->languageService->sL('LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.detailed.error'),
+            $this->languageService->sL(
+                'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.detailed.error'
+            ),
             '',
             FlashMessage::NOTICE,
             true
         );
-        return $message;
     }
 
-    /**
-     * @param FlashMessage $message
-     */
-    private function showFlashMessage(FlashMessage $message)
+    private function showFlashMessage(FlashMessage $message): void
     {
         $messageQueue = GeneralUtility::makeInstance(FlashMessageService::class)->getMessageQueueByIdentifier();
         $messageQueue->addMessage($message);

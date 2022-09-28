@@ -1,0 +1,26 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method Aoe\\\\Cachemgm\\\\Controller\\\\BackendModuleController\\:\\:getCacheCount\\(\\) has parameter \\$backend with no typehint specified\\.$#"
+			count: 1
+			path: ../Classes/Controller/BackendModuleController.php
+
+		-
+			message: "#^Method Aoe\\\\Cachemgm\\\\Controller\\\\BackendModuleController\\:\\:getFlushCacheMessage\\(\\) has parameter \\$cacheId with no typehint specified\\.$#"
+			count: 1
+			path: ../Classes/Controller/BackendModuleController.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$backend\\)\\: Unexpected token \"\\$backend\", expected type at offset 18$#"
+			count: 1
+			path: ../Classes/Controller/BackendModuleController.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$cacheId\\)\\: Unexpected token \"\\$cacheId\", expected type at offset 18$#"
+			count: 1
+			path: ../Classes/Controller/BackendModuleController.php
+
+		-
+			message: "#^Variable \\$cacheId might not be defined\\.$#"
+			count: 4
+			path: ../Classes/Controller/BackendModuleController.php

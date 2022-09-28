@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Aoe\Cachemgm\Utility;
 
 class CacheUtility
 {
-
     /**
      * @return array with cache keys
      */
@@ -13,54 +14,38 @@ class CacheUtility
         return array_keys($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']);
     }
 
-    /**
-     * @param string $cacheId
-     * @return string
-     */
-    public static function getCacheType($cacheId)
+    public static function getCacheType(string $cacheId): string
     {
         $conf = (new self())->getCacheConfiguration($cacheId);
-        $frontend = $conf['frontend'];
-        if (empty($frontend)) {
+        if (!isset($conf['frontend'])) {
             return 'Default (Variable)';
         }
-        return $frontend;
+        return $conf['frontend'];
     }
 
-    /**
-     * @param string $cacheId
-     * @return string
-     */
-    public static function getCacheBackendType($cacheId)
+    public static function getCacheBackendType(string $cacheId): string
     {
         $conf = (new self())->getCacheConfiguration($cacheId);
-        $backend = $conf['backend'];
-        if (empty($backend)) {
+        if (!isset($conf['backend'])) {
             return 'Default (DbBackend)';
         }
-        return $backend;
+        return $conf['backend'];
     }
 
-    /**
-     * @param string $cacheId
-     * @return string
-     */
-    public static function getCacheOptions($cacheId): string
+    public static function getCacheOptions(string $cacheId): string
     {
         $conf = (new self())->getCacheConfiguration($cacheId);
-        $options = '';
         if (isset($conf['options']) && !empty($conf['options'])) {
-            $options = str_replace('array', '', var_export($conf['options'], true));
+            return str_replace('array', '', var_export($conf['options'], true));
         }
 
-        return $options;
+        return '';
     }
 
     /**
-     * @param string $cacheId
      * @return mixed
      */
-    private function getCacheConfiguration($cacheId)
+    private function getCacheConfiguration(string $cacheId)
     {
         return $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheId];
     }
