@@ -4,5 +4,5 @@ services:
     autoconfigure: true
     public: false
 
-  \Aoe\Cachemgm\:
+  Aoe\Cachemgm\:
     resource: '../Classes/*'
