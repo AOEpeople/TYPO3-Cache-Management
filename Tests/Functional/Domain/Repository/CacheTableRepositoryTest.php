@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Aoe\Cachemgm\Tests\Functional\Domain\Repository;
@@ -34,27 +35,22 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class CacheTableRepositoryTest extends FunctionalTestCase
 {
-
     /**
      * @var CacheTableRepository
      */
     protected $subject;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $objectManger = GeneralUtility::makeInstance(ObjectManager::class);
         $this->subject = $objectManger->get(CacheTableRepository::class);
     }
 
-    /**
-     * @test
-     */
-    public function countRowsInTable()
+    public function testCountRowsInTable()
     {
-
         $this->importDataSet(__DIR__ . '/Fixtures/cache_pages.xml');
-        $this->assertEquals(
+        $this->assertSame(
             2,
             $this->subject->countRowsInTable('cache_pages')
         );
