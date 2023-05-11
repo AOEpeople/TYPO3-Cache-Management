@@ -15,7 +15,9 @@ jobs:
           - typo3: ^11.5
             php: '8.0'
             experimental: false
-
+          - typo3: ^11.5
+            php: '8.1'
+            experimental: false
     steps:
       - name: Start database server
         run: sudo /etc/init.d/mysql start
