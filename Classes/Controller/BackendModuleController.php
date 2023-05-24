@@ -31,7 +31,7 @@ use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
 use Aoe\Cachemgm\Utility\CacheUtility;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
-use TYPO3\CMS\Core\Cache\Backend\FileBackend;
+use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -43,6 +43,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3Fluid\Fluid\Exception;
 
 class BackendModuleController extends ActionController
 {
@@ -190,22 +191,23 @@ class BackendModuleController extends ActionController
         $propertiesArray = [];
         foreach ($properties as $key => $value) {
             $properties[$key]->setAccessible(true);
-            $value = $properties[$key]->getValue($backend);
-            if (is_object($value)) {
-                $value = 'Object: ' . get_class($value);
+            // check if element is an object and the property is valid
+            if ($properties[$key]->isInitialized($backend)) {
+                $value = $properties[$key]->getValue($backend);
+                if (is_object($value)) {
+                    $value = 'Object: ' . get_class($value);
+                }
+                // remove elements that are not a string
+                $propertiesArray[$properties[$key]->getName()] = is_string($value) ? $value : '';
             }
-            $propertiesArray[$properties[$key]->getName()] = $value;
         }
         return $propertiesArray;
     }
 
-    /**
-     * @return array|string
-     */
-    private function getFileBackendInfo(BackendInterface $backend)
+    private function getFileBackendInfo(BackendInterface $backend): ?string
     {
-        $fileBackend = [];
-        if ($backend instanceof FileBackend) {
+        $fileBackend = null;
+        if ($backend instanceof SimpleFileBackend) {
             $fileBackend = 'Cache Folder: ' . $backend->getCacheDirectory();
             if (!is_writable($backend->getCacheDirectory())) {
                 $fileBackend .= '&nbsp;<span class="badge badge-danger">' .
