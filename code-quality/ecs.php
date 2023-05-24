@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Fixer\FunctionNotation\FunctionTypehintSpaceFixer;
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
 use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -40,6 +41,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             // Default Skips
             NotOperatorWithSuccessorSpaceFixer::class => null,
             DocBlockLineLengthFixer::class => null,
+
+            FunctionTypehintSpaceFixer::class,
 
             // @todo strict php
             DeclareStrictTypesFixer::class => null,
