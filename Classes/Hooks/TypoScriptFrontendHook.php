@@ -57,6 +57,10 @@ class TypoScriptFrontendHook
             return false;
         }
 
+        if (!isset($tsfe->applicationData['tx_crawler'])) {
+            return false;
+        }
+
         return $tsfe->applicationData['tx_crawler']['running']
             && in_array(
                 'tx_cachemgm_recache',
