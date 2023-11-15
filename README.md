@@ -32,7 +32,7 @@ Copyright: (c) 2009 - 2019, Kasper Skaarhoj & AOE GmbH
 License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 [1]: http://typo3.org/extensions/repository/view/cachemgm
-[2]: http://docs.typo3.org/typo3cms/extensions/cachemgm/
+[2]: https://docs.typo3.org/p/aoepeople/cachemgm/10.0/en-us/
 
 ## Contributing
 
