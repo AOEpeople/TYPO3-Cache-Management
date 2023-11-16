@@ -24,7 +24,7 @@ The content of this document is related to TYPO3, a GNU/GPL CMS/Framework availa
    :hidden:
 
    Introduction/Index
+   Modules/Modules
    Aoe/Aoe
    Links/Links
    Targets
-
