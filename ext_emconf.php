@@ -1,5 +1,5 @@
 <?php
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['cachemgm'] = [
     'title' => 'Cache Management Extension',
     'description' => 'Provides management of the page caching for high traffic websites.',
     'category' => 'module',
@@ -18,7 +18,7 @@ $EM_CONF[$_EXTKEY] = [
     'clearCacheOnLoad' => 0,
     'lockType' => '',
     'author_company' => '',
-    'version' => '10.0.6',
+    'version' => '10.0.10',
     'constraints' => [
         'depends' => [
             'typo3' => '10.4.0-11.5.99',
