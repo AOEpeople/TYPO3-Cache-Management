@@ -17,11 +17,13 @@ But the typical case for pages with plugins is this:
 
 .. image:: Screenshots/img-3.png
 
+
 This indicates the for each consultancy listed a cHash value makes the page display cached.
 
 You may also encounter situations like this:
 
 .. image:: Screenshots/img-4.png
+
 
 The "Your account" page has two cached instances - one for the non- logged-in user, "0,-1" and one for a logged user "0,-2,1". If users with different group combinations existed or accessed the page you would see additional instances.
 
@@ -39,6 +41,7 @@ From TYPO3.org, this is the stats of the cache_hash table.
 
 .. image:: Screenshots/img-5.png
 
+
 SELECT benchmarks
 .................
 
@@ -50,14 +53,19 @@ In the sample below you can see that 100 records are tested on for the PRIMARY k
 
 .. image:: Screenshots/img-6.png
 
+
 These numbers are from TYPO3.org where the MySQL server is external to the webservers. You may get better performance with less pages and a local MySQL installation.
 
 Here are some other examples from TYPO3.org:
 
 .. image:: Screenshots/img-7.png
+
 .. image:: Screenshots/img-8.png
+
 .. image:: Screenshots/img-9.png
+
 .. image:: Screenshots/img-10.png
+
 
 File System Benchmarks
 ......................
@@ -67,6 +75,7 @@ For each directory listed below this test will pick a number of random files and
 The output shows the files read, their size and three columns 0,1,2 which shows the read time for three consecutive read operations. Usually column 0 will contain a higher number than column 1 and 2 which should be the same since the first read (column 0 time) will indicate the performance without the file system cache and read 2 and 3 (Columns 1+2) will indicate the delivery when the file system has cached the file. Also, an average is calculated.
 
 .. image:: Screenshots/img-11.png
+
 
 Re-caching your website
 -----------------------
@@ -78,6 +87,7 @@ Re-caching is something you may like to do if you just cleared cache, want to re
 Anyway, consider this scenario: Only a few pages are cached and they were cached about 3 hours ago:
 
 .. image:: Screenshots/img-12.png
+
 
 We wish to recache pages from the first page, 2 levels down now.
 
@@ -94,9 +104,11 @@ While processing you will see how the times are updating as the script traverses
 
 .. image:: Screenshots/img-13.png
 
+
 Eventually it looks like this:
 
 .. image:: Screenshots/img-14.png
+
 
 You see all pages are recently cached down to a level of 2 from the root page (for instance the “Thank you!” was not visited!).
 
