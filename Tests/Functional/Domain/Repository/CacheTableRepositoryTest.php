@@ -31,10 +31,14 @@ namespace Aoe\Cachemgm\Tests\Functional\Domain\Repository;
 use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class CacheTableRepositoryTest extends FunctionalTestCase
 {
+    /**
+     * @var array
+     */
+    protected $testExtensionsToLoad = ['typo3conf/ext/cachemgm'];
+
     /**
      * @var CacheTableRepository
      */
@@ -43,8 +47,7 @@ class CacheTableRepositoryTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $objectManger = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->subject = $objectManger->get(CacheTableRepository::class);
+        $this->subject = GeneralUtility::makeInstance(CacheTableRepository::class);
     }
 
     public function testCountRowsInTable()

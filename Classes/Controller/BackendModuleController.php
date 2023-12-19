@@ -42,7 +42,6 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class BackendModuleController extends ActionController
 {
@@ -61,11 +60,6 @@ class BackendModuleController extends ActionController
     protected $view;
 
     /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
-
-    /**
      * @var CacheManager
      */
     private $cacheManager;
@@ -77,8 +71,7 @@ class BackendModuleController extends ActionController
 
     public function __construct()
     {
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->cacheManager = $this->objectManager->get(CacheManager::class);
+        $this->cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         $this->languageService = $GLOBALS['LANG'];
     }
 
@@ -174,7 +167,7 @@ class BackendModuleController extends ActionController
      */
     private function getHref(string $controller, string $action, array $parameters = []): string
     {
-        $uriBuilder = $this->objectManager->get(UriBuilder::class);
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $uriBuilder->setRequest($this->request);
         return $uriBuilder->reset()
             ->uriFor($action, $parameters, $controller);
@@ -225,7 +218,7 @@ class BackendModuleController extends ActionController
      */
     private function getCacheCount($backend): array
     {
-        $cacheTableRepository = $this->objectManager->get(CacheTableRepository::class);
+        $cacheTableRepository = GeneralUtility::makeInstance(CacheTableRepository::class);
 
         $cacheCount = [];
         if ($backend instanceof Typo3DatabaseBackend) {
