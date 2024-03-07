@@ -34,6 +34,20 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class CacheTableRepositoryTest extends FunctionalTestCase
 {
+
+    protected array $configurationToUseInTestInstance = [
+        'SYS' => [
+            'caching' => [
+                'cacheConfigurations' => [
+                    // Set pages cache database backend, testing-framework sets this to NullBackend by default.
+                    'pages' => [
+                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
+                    ],
+                ],
+            ],
+        ],
+    ];
+
     protected array $testExtensionsToLoad = ['typo3conf/ext/cachemgm'];
 
     /**
