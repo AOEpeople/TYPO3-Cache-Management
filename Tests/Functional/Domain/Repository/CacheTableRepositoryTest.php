@@ -29,15 +29,12 @@ namespace Aoe\Cachemgm\Tests\Functional\Domain\Repository;
  ***************************************************************/
 
 use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class CacheTableRepositoryTest extends FunctionalTestCase
 {
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = ['typo3conf/ext/cachemgm'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/cachemgm'];
 
     /**
      * @var CacheTableRepository
@@ -50,7 +47,7 @@ class CacheTableRepositoryTest extends FunctionalTestCase
         $this->subject = GeneralUtility::makeInstance(CacheTableRepository::class);
     }
 
-    public function testCountRowsInTable()
+    public function testCountRowsInTable(): void
     {
         $this->importDataSet(__DIR__ . '/Fixtures/cache_pages.xml');
         $this->assertSame(
