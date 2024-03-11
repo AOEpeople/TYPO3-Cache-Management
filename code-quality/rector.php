@@ -49,7 +49,6 @@ return RectorConfig::configure()
         __DIR__ . '/rector.php'
     ])
     ->withPhpSets(
-        false,
         true
     )
     ->withSets([
@@ -63,6 +62,7 @@ return RectorConfig::configure()
         SetList::PHP_80,
         SetList::PHP_81,
         SetList::PHP_82,
+        SetList::PHP_83,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ])
     ->withRules([

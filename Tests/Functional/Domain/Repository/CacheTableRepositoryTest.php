@@ -29,19 +29,19 @@ namespace Aoe\Cachemgm\Tests\Functional\Domain\Repository;
  ***************************************************************/
 
 use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
+use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class CacheTableRepositoryTest extends FunctionalTestCase
 {
-
     protected array $configurationToUseInTestInstance = [
         'SYS' => [
             'caching' => [
                 'cacheConfigurations' => [
                     // Set pages cache database backend, testing-framework sets this to NullBackend by default.
                     'pages' => [
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
+                        'backend' => Typo3DatabaseBackend::class,
                     ],
                 ],
             ],
