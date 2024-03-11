@@ -89,10 +89,11 @@ class BackendModuleController extends ActionController
     {
         try {
             $cacheId = $this->request->getArgument('cacheId');
-        } catch (NoSuchArgumentException $noSuchArgumentException) {
+        } catch (NoSuchArgumentException) {
             $this->showFlashMessage($this->getNoCacheFoundMessage());
             $this->forward('index');
         }
+
         $cache = $this->cacheManager->getCache($cacheId);
         $backend = $cache->getBackend();
 
@@ -104,8 +105,8 @@ class BackendModuleController extends ActionController
             [
                 'cacheId' => $cacheId,
                 'cacheInformation' => [
-                    'Frontend Classname' => get_class($cache),
-                    'Backend Classname' => get_class($backend),
+                    'Frontend Classname' => $cache::class,
+                    'Backend Classname' => $backend::class,
                 ],
                 'fileBackend' => $fileBackend,
                 'cacheCount' => $cacheCount,
@@ -119,10 +120,11 @@ class BackendModuleController extends ActionController
     {
         try {
             $cacheId = $this->request->getArgument('cacheId');
-        } catch (NoSuchArgumentException $noSuchArgumentException) {
+        } catch (NoSuchArgumentException) {
             $this->showFlashMessage($this->getNoCacheFoundMessage());
             $this->forward('index');
         }
+
         $cache = $this->cacheManager->getCache($cacheId);
         $cache->flush();
         $this->showFlashMessage($this->getFlushCacheMessage($cacheId));
@@ -187,12 +189,14 @@ class BackendModuleController extends ActionController
             if ($properties[$key]->isInitialized($backend)) {
                 $value = $properties[$key]->getValue($backend);
                 if (is_object($value)) {
-                    $value = 'Object: ' . get_class($value);
+                    $value = 'Object: ' . $value::class;
                 }
+
                 // remove elements that are not a string
                 $propertiesArray[$properties[$key]->getName()] = is_string($value) ? $value : '';
             }
         }
+
         return $propertiesArray;
     }
 
@@ -209,14 +213,14 @@ class BackendModuleController extends ActionController
                     . '</span>';
             }
         }
+
         return $fileBackend;
     }
 
     /**
-     * @param $backend
      * @return array<string, mixed>
      */
-    private function getCacheCount($backend): array
+    private function getCacheCount(BackendInterface $backend): array
     {
         $cacheTableRepository = GeneralUtility::makeInstance(CacheTableRepository::class);
 
@@ -227,14 +231,11 @@ class BackendModuleController extends ActionController
             $cacheCount['Cache Tags Table'] = $backend->getTagsTable();
             $cacheCount['Cache Tags Entry Count'] = $cacheTableRepository->countRowsInTable($backend->getTagsTable());
         }
+
         return $cacheCount;
     }
 
-    /**
-     * @param $cacheId
-     * @return object|FlashMessage
-     */
-    private function getFlushCacheMessage($cacheId): object
+    private function getFlushCacheMessage(string $cacheId): object
     {
         return GeneralUtility::makeInstance(
             FlashMessage::class,
@@ -252,9 +253,6 @@ class BackendModuleController extends ActionController
         );
     }
 
-    /**
-     * @return object|FlashMessage
-     */
     private function getNoCacheFoundMessage(): object
     {
         return GeneralUtility::makeInstance(

@@ -20,6 +20,7 @@ class CacheUtility
         if (!isset($conf['frontend'])) {
             return 'Default (Variable)';
         }
+
         return $conf['frontend'];
     }
 
@@ -29,6 +30,7 @@ class CacheUtility
         if (!isset($conf['backend'])) {
             return 'Default (DbBackend)';
         }
+
         return $conf['backend'];
     }
 

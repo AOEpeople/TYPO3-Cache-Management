@@ -29,9 +29,9 @@ namespace Aoe\Cachemgm\Test\Unit\Utility;
  ***************************************************************/
 
 use Aoe\Cachemgm\Utility\CacheUtility;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
 use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class CacheUtilityTest extends UnitTestCase
 {
@@ -55,12 +55,12 @@ class CacheUtilityTest extends UnitTestCase
         ];
     }
 
-    public function testGetAvailableCachesReturnsArray()
+    public function testGetAvailableCachesReturnsArray(): void
     {
         $this->assertTrue(is_array(CacheUtility::getAvailableCaches()));
     }
 
-    public function testGetCacheTypeReturnsString()
+    public function testGetCacheTypeReturnsString(): void
     {
         $this->assertSame(
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_core']['frontend'],
@@ -68,7 +68,7 @@ class CacheUtilityTest extends UnitTestCase
         );
     }
 
-    public function testGetCacheTypeReturnsDefaultValue()
+    public function testGetCacheTypeReturnsDefaultValue(): void
     {
         $this->assertSame(
             'Default (Variable)',
@@ -76,7 +76,7 @@ class CacheUtilityTest extends UnitTestCase
         );
     }
 
-    public function testGetCacheBackendReturnsString()
+    public function testGetCacheBackendReturnsString(): void
     {
         $this->assertSame(
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cache_core']['backend'],
@@ -84,7 +84,7 @@ class CacheUtilityTest extends UnitTestCase
         );
     }
 
-    public function testGetCacheBackendReturnsDefaultValue()
+    public function testGetCacheBackendReturnsDefaultValue(): void
     {
         $this->assertSame(
             'Default (DbBackend)',
@@ -92,12 +92,12 @@ class CacheUtilityTest extends UnitTestCase
         );
     }
 
-    public function testGetCacheOptionsReturnsEmptyString()
+    public function testGetCacheOptionsReturnsEmptyString(): void
     {
         $this->assertEmpty(CacheUtility::getCacheOptions('cache_core'));
     }
 
-    public function testGetCacheOptionsReturnsOptionString()
+    public function testGetCacheOptionsReturnsOptionString(): void
     {
         $cacheOptions = CacheUtility::getCacheOptions('cache_hash');
         $this->assertStringContainsString('first', $cacheOptions);
