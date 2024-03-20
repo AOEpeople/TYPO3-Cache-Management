@@ -40,7 +40,7 @@ class AbstractRepository extends Repository
         return $queryBuilder
             ->count('*')
             ->from($table)
-            ->execute()
-            ->fetchColumn(0);
+            ->executeQuery()
+            ->fetchOne();
     }
 }

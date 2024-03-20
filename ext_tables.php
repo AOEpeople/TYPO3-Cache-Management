@@ -1,5 +1,7 @@
 <?php
 
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -7,7 +9,9 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 defined('TYPO3') or die();
 
-if (TYPO3_MODE == 'BE') {
+if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+    && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()
+) {
     // Add Backend-Module
     $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
     $iconRegistry->registerIcon(
