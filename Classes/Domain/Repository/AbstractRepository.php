@@ -41,6 +41,6 @@ class AbstractRepository extends Repository
             ->count('*')
             ->from($table)
             ->execute()
-            ->fetchColumn(0);
+            ->fetchOne();
     }
 }
