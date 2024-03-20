@@ -262,7 +262,7 @@ class BackendModuleController extends ActionController
             $this->languageService->sL(
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.header'
             ),
-            FlashMessage::OK,
+            \TYPO3\CMS\Core\Messaging\AbstractMessage::OK,
             true
         );
     }
@@ -275,7 +275,7 @@ class BackendModuleController extends ActionController
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.detailed.error'
             ),
             '',
-            FlashMessage::NOTICE,
+            \TYPO3\CMS\Core\Messaging\AbstractMessage::NOTICE,
             true
         );
     }
