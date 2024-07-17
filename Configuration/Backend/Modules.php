@@ -2,17 +2,22 @@
 
 declare(strict_types=1);
 
+use Aoe\Cachemgm\Controller\BackendModuleController;
+
 return [
     'cachemgm' => [
         'parent' => 'tools',
         'access' => 'admin',
         'labels' => 'LLL:EXT:' . 'cachemgm' . '/Resources/Private/BackendModule/Language/locallang.xlf',
-        'icon' => 'EXT:' . 'cachemgm' . '/Resources/Public/Icons/Extension.svg',
+        'iconIdentifier' => 'module-cachemgm-backend-module',
         'extensionName' => 'Cachemgm',
         'controllerActions' => [
-            \Aoe\Cachemgm\Controller\BackendModuleController::class => [
-                'index', 'detail', 'flush'
+            BackendModuleController::class => [
+                'index',
+                'detail',
+                'flush',
             ]
         ],
+        'path' => 'module/tools/cachemgm',
     ],
 ];
