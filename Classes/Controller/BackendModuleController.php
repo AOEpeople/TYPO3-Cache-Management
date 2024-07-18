@@ -50,7 +50,7 @@ class BackendModuleController extends ActionController
     /**
      * @var ModuleTemplateFactory
      */
-    protected ModuleTemplateFactory $moduleTemplateFactory;
+    public $moduleTemplateFactory;
 
     /**
      * BackendTemplateContainer
@@ -62,7 +62,7 @@ class BackendModuleController extends ActionController
     /**
      * @var CacheManager
      */
-    private $cacheManager;
+    private object $cacheManager;
 
     /**
      * @var LanguageService

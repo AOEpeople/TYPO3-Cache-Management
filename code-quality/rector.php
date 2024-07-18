@@ -70,14 +70,8 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         RecastingRemovalRector::class,
-        PostIncDecToPreIncDecRector::class,
-        FinalizeClassesWithoutChildrenRector::class,
-        ChangeAndIfToEarlyReturnRector::class,
         IssetOnPropertyObjectToPropertyExistsRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
-        RenameVariableToMatchNewTypeRector::class,
-        AddLiteralSeparatorToNumberRector::class,
-        RenameForeachValueVariableToMatchMethodCallReturnTypeRector::class,
         ClassPropertyAssignToConstructorPromotionRector::class => [
             __DIR__ . '/../Classes/Service/Typo3Service.php',
         ],// @todo strict php

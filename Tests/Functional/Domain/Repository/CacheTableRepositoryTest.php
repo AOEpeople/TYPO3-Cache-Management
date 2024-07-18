@@ -63,7 +63,7 @@ class CacheTableRepositoryTest extends FunctionalTestCase
 
     public function testCountRowsInTable(): void
     {
-        $this->importDataSet(__DIR__ . '/Fixtures/cache_pages.xml');
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/cache_pages.csv');
         $this->assertSame(
             2,
             $this->subject->countRowsInTable('cache_pages')
