@@ -31,7 +31,6 @@ use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
 use Aoe\Cachemgm\Utility\CacheUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
 use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
@@ -44,6 +43,7 @@ use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
+use TYPO3\CMS\Fluid\View\TemplatePaths;
 
 class BackendModuleController extends ActionController
 {
@@ -54,15 +54,13 @@ class BackendModuleController extends ActionController
 
     /**
      * BackendTemplateContainer
-     *
-     * @var BackendTemplateView
      */
     protected $view;
 
     /**
      * @var CacheManager
      */
-    private object $cacheManager;
+    private readonly object $cacheManager;
 
     /**
      * @var LanguageService
@@ -145,11 +143,26 @@ class BackendModuleController extends ActionController
         return new ForwardResponse('index');
     }
 
-    protected function initializeView($view): void
+    protected function initializeView(): void
     {
-        $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
-        $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
-        $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
+        /*
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
+        $templatePaths->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
+        $templatePaths->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
+
+        $moduleTemplate->setContent($this->view->setTemplatePaths($templatePaths));
+         */
+
+        if ($this->view instanceof \TYPO3\CMS\Fluid\View\StandaloneView) {
+            $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
+            $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
+            $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
+        }
+
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setContent($this->view->render());
     }
 
     /**

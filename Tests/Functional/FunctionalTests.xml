@@ -4,7 +4,7 @@
          bootstrap="../../.Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php"
          backupGlobals="true"
          colors="true"
-         processIsolation="false"
+         processIsolation="true"
          stopOnError="false"
          stopOnFailure="false"
          stopOnIncomplete="false"
