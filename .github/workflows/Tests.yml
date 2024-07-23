@@ -58,7 +58,7 @@ jobs:
 
       - name: Functional Tests without coverage
         run: |
-          export "FUNCTIONAL_XML"=.Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTests-v10.xml
+          export "FUNCTIONAL_XML"=Tests/Functional/FunctionalTests.xml
           .Build/bin/phpunit --coverage-filter Classes --colors -c $FUNCTIONAL_XML Tests/Functional
         if: matrix.typo3 != '^12.5' && matrix.php != '8.3'
         env:
