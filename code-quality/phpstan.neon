@@ -7,10 +7,10 @@ parameters:
     level: 6
     paths:
         - "../Classes/"
-
+    ignoreErrors:
+      - identifier: missingType.iterableValue
+      - identifier: missingType.generics
     inferPrivatePropertyTypeFromConstructor: true
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
 
 services:
     -

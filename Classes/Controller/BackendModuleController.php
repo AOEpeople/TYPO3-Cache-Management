@@ -145,16 +145,6 @@ class BackendModuleController extends ActionController
 
     protected function initializeView(): void
     {
-        /*
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $templatePaths = new TemplatePaths();
-        $templatePaths->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
-        $templatePaths->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
-        $templatePaths->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
-
-        $moduleTemplate->setContent($this->view->setTemplatePaths($templatePaths));
-         */
-
         if ($this->view instanceof \TYPO3\CMS\Fluid\View\StandaloneView) {
             $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
             $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
@@ -275,7 +265,7 @@ class BackendModuleController extends ActionController
             $this->languageService->sL(
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.header'
             ),
-            \TYPO3\CMS\Core\Messaging\AbstractMessage::OK,
+            \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK,
             true
         );
     }
@@ -288,7 +278,7 @@ class BackendModuleController extends ActionController
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.detailed.error'
             ),
             '',
-            \TYPO3\CMS\Core\Messaging\AbstractMessage::NOTICE,
+            \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::NOTICE,
             true
         );
     }
