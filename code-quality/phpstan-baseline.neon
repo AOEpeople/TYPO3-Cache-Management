@@ -1,16 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			message: "#^Anonymous variable in a `\\$queryBuilder\\-\\>count\\('\\*'\\)\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 1
-			path: ../Classes/Domain/Repository/AbstractRepository.php
 
-		-
-			message: "#^Anonymous variable in a `\\$queryBuilder\\-\\>count\\('\\*'\\)\\-\\>from\\(\\$table\\)\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 1
-			path: ../Classes/Domain/Repository/AbstractRepository.php
-
-		-
-			message: "#^Anonymous variable in a `\\$queryBuilder\\-\\>count\\('\\*'\\)\\-\\>from\\(\\$table\\)\\-\\>execute\\(\\)\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 1
-			path: ../Classes/Domain/Repository/AbstractRepository.php

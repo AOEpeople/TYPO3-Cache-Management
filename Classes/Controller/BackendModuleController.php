@@ -29,7 +29,8 @@ namespace Aoe\Cachemgm\Controller;
 
 use Aoe\Cachemgm\Domain\Repository\CacheTableRepository;
 use Aoe\Cachemgm\Utility\CacheUtility;
-use TYPO3\CMS\Backend\View\BackendTemplateView;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Cache\Backend\BackendInterface;
 use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
@@ -38,60 +39,67 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
+use TYPO3\CMS\Fluid\View\TemplatePaths;
 
 class BackendModuleController extends ActionController
 {
     /**
-     * Backend Template Container
-     *
-     * @var string
+     * @var ModuleTemplateFactory
      */
-    protected $defaultViewObjectName = BackendTemplateView::class;
+    public $moduleTemplateFactory;
 
     /**
      * BackendTemplateContainer
-     *
-     * @var BackendTemplateView
      */
     protected $view;
 
     /**
      * @var CacheManager
      */
-    private $cacheManager;
+    private readonly object $cacheManager;
 
     /**
      * @var LanguageService
      */
     private $languageService;
 
-    public function __construct()
-    {
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+    ) {
         $this->cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         $this->languageService = $GLOBALS['LANG'];
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+
         $this->view->assignMultiple([
             'cacheConfigurations' => $this->buildCacheConfigurationArray(),
             'action_confirm_flush_message' => $this->languageService->sL(
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_confirm_flush'
             ),
         ]);
+
+        $moduleTemplate->setContent($this->view->render());
+
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    public function detailAction(): void
+    public function detailAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+
         try {
             $cacheId = $this->request->getArgument('cacheId');
         } catch (NoSuchArgumentException) {
             $this->showFlashMessage($this->getNoCacheFoundMessage());
-            $this->forward('index');
+            return new ForwardResponse('index');
         }
 
         $cache = $this->cacheManager->getCache($cacheId);
@@ -114,28 +122,37 @@ class BackendModuleController extends ActionController
                 'overviewLink' => $this->getHref('BackendModule', 'index'),
             ]
         );
+
+        $moduleTemplate->setContent($this->view->render());
+
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    public function flushAction(): void
+    public function flushAction(): ResponseInterface
     {
         try {
             $cacheId = $this->request->getArgument('cacheId');
         } catch (NoSuchArgumentException) {
             $this->showFlashMessage($this->getNoCacheFoundMessage());
-            $this->forward('index');
+            return new ForwardResponse('index');
         }
 
         $cache = $this->cacheManager->getCache($cacheId);
         $cache->flush();
         $this->showFlashMessage($this->getFlushCacheMessage($cacheId));
-        $this->forward('index');
+        return new ForwardResponse('index');
     }
 
-    protected function initializeView(ViewInterface $view): void
+    protected function initializeView(): void
     {
-        $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
-        $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
-        $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
+        if ($this->view instanceof \TYPO3\CMS\Fluid\View\StandaloneView) {
+            $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
+            $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
+            $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
+        }
+
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setContent($this->view->render());
     }
 
     /**
@@ -248,7 +265,7 @@ class BackendModuleController extends ActionController
             $this->languageService->sL(
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.flush.header'
             ),
-            FlashMessage::OK,
+            \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK,
             true
         );
     }
@@ -261,7 +278,7 @@ class BackendModuleController extends ActionController
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.flash.detailed.error'
             ),
             '',
-            FlashMessage::NOTICE,
+            \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::NOTICE,
             true
         );
     }

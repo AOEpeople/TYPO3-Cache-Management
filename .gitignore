@@ -29,4 +29,9 @@ nbproject
 composer.lock
 .php_cs.cache
 var
+# PHPUnit Reports
+Tests/reports
+reports
 .cache
+.phpunit.cache
+.phpunit.result.cache

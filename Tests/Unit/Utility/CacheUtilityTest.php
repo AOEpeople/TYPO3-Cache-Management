@@ -37,6 +37,7 @@ class CacheUtilityTest extends UnitTestCase
 {
     protected function setUp(): void
     {
+        parent::setUp();
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'] = [
             'cache_core' => [
                 'frontend' => PhpFrontend::class,

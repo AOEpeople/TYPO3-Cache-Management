@@ -28,7 +28,7 @@ And then open `Documentation-GENERATED-temp/Result/project/0.0.0/Index.html` wit
 
 ## Copyright / License
 
-Copyright: (c) 2009 - 2019, Kasper Skaarhoj & AOE GmbH
+Copyright: (c) 2009 - 2024, Kasper Skaarhoj & AOE GmbH
 License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 [1]: http://typo3.org/extensions/repository/view/cachemgm
