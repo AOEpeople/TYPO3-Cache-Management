@@ -85,9 +85,7 @@ class BackendModuleController extends ActionController
             ),
         ]);
 
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
     public function detailAction(): ResponseInterface
@@ -122,9 +120,7 @@ class BackendModuleController extends ActionController
             ]
         );
 
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
     public function flushAction(): ResponseInterface
@@ -285,6 +281,6 @@ class BackendModuleController extends ActionController
     private function showFlashMessage(FlashMessage $message): void
     {
         $messageQueue = GeneralUtility::makeInstance(FlashMessageService::class)->getMessageQueueByIdentifier();
-        $messageQueue->addMessage($message);
+        $messageQueue->enqueue($message);
     }
 }
