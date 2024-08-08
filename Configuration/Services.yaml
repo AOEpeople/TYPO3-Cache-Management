@@ -6,3 +6,9 @@ services:
 
   Aoe\Cachemgm\:
     resource: '../Classes/*'
+
+  Aoe\Cachemgm\EventListener\AvoidCacheLoading:
+    tags:
+      - name: event.listener
+        identifier: 'aoepoeple-cachemgm/avoid-cache-loading'
+        event: TYPO3\CMS\Frontend\Event\ShouldUseCachedPageDataIfAvailableEvent
