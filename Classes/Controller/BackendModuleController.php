@@ -78,7 +78,7 @@ class BackendModuleController extends ActionController
     {
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
 
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'cacheConfigurations' => $this->buildCacheConfigurationArray(),
             'action_confirm_flush_message' => $this->languageService->sL(
                 'LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.action_confirm_flush'
@@ -106,7 +106,7 @@ class BackendModuleController extends ActionController
         $fileBackend = $this->getFileBackendInfo($backend);
         $cacheCount = $this->getCacheCount($backend);
 
-        $this->view->assignMultiple(
+        $moduleTemplate->assignMultiple(
             [
                 'cacheId' => $cacheId,
                 'cacheInformation' => [
