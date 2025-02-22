@@ -13,7 +13,7 @@
         <pre>$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']</pre>
     </p>
 
-    <table border="0" cellspacing="1" cellpadding="0" class="table table-striped table-hover">
+    <table border="0" cellspacing="1" cellpadding="0" class="table table-striped table-hover scrollable-table">
         <thead>
         <tr>
             <td><f:translate key="LLL:EXT:cachemgm/Resources/Private/BackendModule/Language/locallang.xlf:bemodule.cache_name" default="Cache name"/></td>
@@ -42,5 +42,11 @@
         </f:for>
         </tbody>
     </table>
-
+    <style>
+        .scrollable-table{
+            display: block;
+            overflow: auto;
+            max-height: -webkit-fill-available;
+        }
+    </style>
 </f:section>
