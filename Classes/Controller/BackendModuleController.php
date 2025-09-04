@@ -196,7 +196,6 @@ class BackendModuleController extends ActionController
         $properties = $reflectionBackend->getProperties();
         $propertiesArray = [];
         foreach ($properties as $key => $value) {
-            $properties[$key]->setAccessible(true);
             // check if element is an object and the property is valid
             if ($properties[$key]->isInitialized($backend)) {
                 $value = $properties[$key]->getValue($backend);
