@@ -9,7 +9,6 @@ parameters:
         - "../Classes/"
     ignoreErrors:
       - identifier: missingType.iterableValue
-      - identifier: missingType.generics
     inferPrivatePropertyTypeFromConstructor: true
 
 services:

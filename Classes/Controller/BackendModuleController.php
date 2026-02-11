@@ -47,19 +47,9 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 class BackendModuleController extends ActionController
 {
     /**
-     * @var ModuleTemplateFactory
-     */
-    public $moduleTemplateFactory;
-
-    /**
      * BackendTemplateContainer
      */
     protected $view;
-
-    /**
-     * @var CacheManager
-     */
-    private readonly object $cacheManager;
 
     /**
      * @var LanguageService
@@ -67,11 +57,10 @@ class BackendModuleController extends ActionController
     private $languageService;
 
     public function __construct(
-        ModuleTemplateFactory $moduleTemplateFactory,
+        public ModuleTemplateFactory $moduleTemplateFactory,
+        private readonly CacheManager $cacheManager,
     ) {
-        $this->cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         $this->languageService = $GLOBALS['LANG'];
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
     }
 
     public function indexAction(): ResponseInterface
@@ -136,18 +125,6 @@ class BackendModuleController extends ActionController
         $cache->flush();
         $this->showFlashMessage($this->getFlushCacheMessage($cacheId));
         return new ForwardResponse('index');
-    }
-
-    protected function initializeView(): void
-    {
-        if ($this->view instanceof \TYPO3\CMS\Fluid\View\StandaloneView) {
-            $this->view->setLayoutRootPaths(['EXT:cachemgm/Resources/Private/Layouts']);
-            $this->view->setPartialRootPaths(['EXT:cachemgm/Resources/Private/Partials']);
-            $this->view->setTemplateRootPaths(['EXT:cachemgm/Resources/Private/Templates/BackendModule']);
-        }
-
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setContent($this->view->render());
     }
 
     /**
