@@ -35,3 +35,6 @@ reports
 .cache
 .phpunit.cache
 .phpunit.result.cache
+
+# Local rendere documentation
+/Documentation-GENERATED-temp/
