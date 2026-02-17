@@ -16,7 +16,8 @@
 Screenshots
 ^^^^^^^^^^^
 
-Example of the available Cache Backends:
+..  figure:: /Images/cachemgm_cachebackends.png
+    :alt: Example of the available Cache Backends
 
-.. image:: /Images/cachemgm_cachebackends.png
+    Example of the available Cache Backends
 

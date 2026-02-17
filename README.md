@@ -1,6 +1,6 @@
 # Cache-Management for TYPO3
 
-This is a TYPO3-Extension, that provides management of the page caching for high traffic websites.
+This is a TYPO3-Extension that provides management of the page caching for high-traffic websites.
 
 ## Download / Installation
 
@@ -14,21 +14,20 @@ $ composer require aoepeople/cachemgm
 The documentation is available online at [docs.typo3.org][2].
 
 If you want you can also render the documentation locally, this can be really helpful when adjusting
-the documentation, to check before commiting.
+the documentation to check before commiting.
 
-The local rendering requires docker, and can be done like this:
+The local rendering requires docker and can be done like this:
 
-```
-$ source <(docker run --rm t3docs/render-documentation:latest show-shell-commands)
-$ dockrun_t3rd makehtml
+```bash
+docker run --rm --pull always -v $(pwd):/project -it ghcr.io/typo3-documentation/render-guides:latest --config=Documentation
 ``` 
 
-And then open `Documentation-GENERATED-temp/Result/project/0.0.0/Index.html` with your browser.
+And then open `Documentation-GENERATED-temp/Index.html` with your browser.
 
 
 ## Copyright / License
 
-Copyright: (c) 2009 - 2024, Kasper Skaarhoj & AOE GmbH
+Copyright: (c) 2009 - 2026, Kasper Skaarhoj & AOE GmbH
 License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 [1]: http://typo3.org/extensions/repository/view/cachemgm

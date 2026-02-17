@@ -1,4 +1,4 @@
-﻿.. include:: Includes.txt
+﻿.. include:: Includes.rst.txt
 
 .. _start:
 
@@ -11,7 +11,7 @@ cachemgm
 :Language:        en
 :Description:     Provides management of the page caching for high traffic websites.
 :Keywords:        cache
-:Copyright:       2005-2019
+:Copyright:       2005-2026
 :Author:          Kasper Skårhøj & AOE GmbH
 :Email:           dev@aoe.com
 :License:         This document is published under the Open Content License available from
@@ -20,11 +20,16 @@ cachemgm
 
 The content of this document is related to TYPO3, a GNU/GPL CMS/Framework available from https://typo3.org/.
 
-.. toctree::
-   :hidden:
+..  toctree::
+    :maxdepth: 2
+    :titlesonly:
 
    Introduction/Index
    Modules/Modules
    Aoe/Aoe
    Links/Links
-   Targets
+
+..  toctree::
+    :hidden:
+
+    Sitemap

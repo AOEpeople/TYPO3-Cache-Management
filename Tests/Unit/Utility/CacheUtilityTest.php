@@ -33,7 +33,7 @@ use TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-class CacheUtilityTest extends UnitTestCase
+final class CacheUtilityTest extends UnitTestCase
 {
     protected function setUp(): void
     {

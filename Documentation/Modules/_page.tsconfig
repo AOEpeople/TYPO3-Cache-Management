@@ -1,0 +1,5 @@
+tx_crawler.crawlerCfg.paramSets {
+    language = &L=[|_TABLE:pages_language_overlay;_FIELD:sys_language_uid]
+    language.procInstrFilter = tx_cachemgm_recache
+    language.baseUrl = http://localhost:8888/typo3/dummy_4.0/
+}

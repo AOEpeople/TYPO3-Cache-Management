@@ -33,7 +33,7 @@ use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-class CacheTableRepositoryTest extends FunctionalTestCase
+final class CacheTableRepositoryTest extends FunctionalTestCase
 {
     protected array $configurationToUseInTestInstance = [
         'SYS' => [
@@ -50,10 +50,7 @@ class CacheTableRepositoryTest extends FunctionalTestCase
 
     protected array $testExtensionsToLoad = ['typo3conf/ext/cachemgm'];
 
-    /**
-     * @var CacheTableRepository
-     */
-    protected $subject;
+    private CacheTableRepository $subject;
 
     protected function setUp(): void
     {

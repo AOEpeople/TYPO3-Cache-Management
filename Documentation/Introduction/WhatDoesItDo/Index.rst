@@ -23,4 +23,4 @@ The AOE Cache Management extensions, gives an overview of which TYPO3 Caches is 
 You have a list of all cache registered under `$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']`,
 and you will be able to look into the details of the cache type and to flush the cache individually if needed.
 
-The cache manager also includes a re-caching hook for usage with the “crawler” extension.
+The cache manager also includes a re-caching hook for usage with the “Crawler” extension.
